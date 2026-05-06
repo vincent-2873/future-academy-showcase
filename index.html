@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>未來學院 · STUDENT SHOWCASE — 不只是作業，是上線中的產品</title>
+  <meta name="description" content="未來學院 20 個學員實戰作品，每一個都可以登入體驗。不是 PPT、不是 demo、是上線中的真實產品。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Google Analytics 4 -- 把 G-XXXXXXXXXX 換成你的 Measurement ID -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script> -->
+</head>
+<body>
+  <!-- 全頁雜訊膠片 -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- 自訂游標 -->
+  <div class="cursor" id="cursor" aria-hidden="true">
+    <div class="cursor__blob"></div>
+    <div class="cursor__dot"></div>
+    <div class="cursor__label" id="cursorLabel"></div>
+  </div>
+
+  <!-- 動態背景：放射光斑 -->
+  <div class="aurora" aria-hidden="true">
+    <div class="aurora__blob aurora__blob--1"></div>
+    <div class="aurora__blob aurora__blob--2"></div>
+    <div class="aurora__blob aurora__blob--3"></div>
+  </div>
+
+  <!-- ===== 頂部導覽 ===== -->
+  <header class="nav">
+    <div class="nav__inner">
+      <a href="#" class="nav__logo" data-magnetic>
+        <span class="nav__dot"></span>
+        <span class="nav__brand">未來學院</span>
+        <span class="nav__sub">FUTURE ACADEMY</span>
+      </a>
+      <nav class="nav__menu">
+        <a href="#hero" class="nav__link nav__link--active">作品</a>
+        <a href="#showcase" class="nav__link">分類</a>
+        <a href="#hall" class="nav__link">名人堂</a>
+        <a href="#voices" class="nav__link">見證</a>
+        <a href="#about" class="nav__link">關於</a>
+      </nav>
+      <div class="nav__actions">
+        <button class="nav__search" id="navSearchBtn" aria-label="搜尋" data-magnetic>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <span>搜尋</span>
+          <kbd>⌘K</kbd>
+        </button>
+        <span class="nav__status">
+          <span class="nav__pulse"></span>
+          學員作品 · LIVE
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== 即時活動 Ticker ===== -->
+  <div class="ticker" id="ticker" aria-label="即時活動">
+    <div class="ticker__inner">
+      <span class="ticker__label">
+        <span class="ticker__dot"></span>
+        LIVE
+      </span>
+      <div class="ticker__track" id="tickerTrack"></div>
+    </div>
+  </div>
+
+  <!-- ===== Hero ===== -->
+  <section class="hero" id="hero">
+    <div class="container">
+      <div class="hero__head">
+        <p class="hero__eyebrow">
+          <span class="hero__eyebrow-num">01</span>
+          <span class="hero__eyebrow-line"></span>
+          STUDENT SHOWCASE / 2025
+        </p>
+      </div>
+
+      <h1 class="hero__title" id="heroTitle">
+        <span class="hero__line">不只是<span class="hero__strike">作業</span>，</span>
+        <span class="hero__line">是<span class="hero__accent">上線中</span>的產品。</span>
+      </h1>
+
+      <div class="hero__sub">
+        <p class="hero__lead">
+          每一個作品，都是學員在 18 週內從 0 推到上線。<br />
+          不是 PPT、不是 demo、不是「假裝有功能」——<br />
+          是真的可以登入、可以點、有真實使用者在用的東西。
+        </p>
+        <a href="#showcase" class="hero__cta" data-magnetic>
+          看 20 個作品
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+
+      <!-- Stats -->
+      <div class="hero__stats">
+        <div class="stat">
+          <span class="stat__num" data-target="20">20</span>
+          <span class="stat__label">上線作品</span>
+        </div>
+        <div class="stat__divider"></div>
+        <div class="stat">
+          <span class="stat__num" data-target="15">15</span>
+          <span class="stat__label">應用領域</span>
+        </div>
+        <div class="stat__divider"></div>
+        <div class="stat">
+          <span class="stat__num" data-target="100" data-suffix="%">100%</span>
+          <span class="stat__label">可登入體驗</span>
+        </div>
+        <div class="stat__divider"></div>
+        <div class="stat">
+          <span class="stat__num" data-target="0">0</span>
+          <span class="stat__label">PPT 作業</span>
+        </div>
+      </div>
+
+      <!-- 浮動產品卡 -->
+      <div class="hero__floats" aria-hidden="true">
+        <div class="float-card float-card--1"><span>🛍️</span><div><b>NeuroShop</b><i>+5,200 users</i></div></div>
+        <div class="float-card float-card--2"><span>🎬</span><div><b>ReelForge</b><i>+12 萬支影片</i></div></div>
+        <div class="float-card float-card--3"><span>🧠</span><div><b>Ensemble</b><i>87% 任務成功</i></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 巨型跑馬燈 #1 ===== -->
+  <section class="marquee marquee--lg" aria-hidden="true">
+    <div class="marquee__track">
+      <span>EVERY PROJECT IS LIVE</span><span class="marquee__sep">●</span>
+      <span>每一個作品都真實上線</span><span class="marquee__sep">●</span>
+      <span>REAL CODE · REAL USERS · REAL TRAFFIC</span><span class="marquee__sep">●</span>
+      <span>真程式碼 · 真使用者 · 真流量</span><span class="marquee__sep">●</span>
+      <span>EVERY PROJECT IS LIVE</span><span class="marquee__sep">●</span>
+      <span>每一個作品都真實上線</span><span class="marquee__sep">●</span>
+      <span>REAL CODE · REAL USERS · REAL TRAFFIC</span><span class="marquee__sep">●</span>
+      <span>真程式碼 · 真使用者 · 真流量</span><span class="marquee__sep">●</span>
+    </div>
+  </section>
+
+  <!-- ===== 整體成就數字 ===== -->
+  <section class="achievements" id="achievements">
+    <div class="container">
+      <p class="hero__eyebrow">
+        <span class="hero__eyebrow-num">02</span>
+        <span class="hero__eyebrow-line"></span>
+        BY THE NUMBERS
+      </p>
+      <h2 class="achievements__title">數字會說話</h2>
+      <div class="achievements__grid" id="achievementsGrid">
+        <!-- JS 注入 -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 搜尋 + 分類 + 作品 Grid ===== -->
+  <section class="filters" id="showcase">
+    <div class="container">
+      <p class="hero__eyebrow">
+        <span class="hero__eyebrow-num">03</span>
+        <span class="hero__eyebrow-line"></span>
+        ALL PROJECTS
+      </p>
+      <h2 class="achievements__title">20 個作品 · 都能登入</h2>
+
+      <div class="search">
+        <svg class="search__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <input type="text" id="searchInput" class="search__input" placeholder="搜尋作品、領域、技術…（試試「電商」「AI」「Next.js」）" autocomplete="off" />
+        <button class="search__clear" id="searchClear" aria-label="清除" hidden>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="pills" id="categoryPills"></div>
+
+      <div class="filters__meta">
+        <span id="resultCount">顯示全部作品</span>
+        <span class="filters__sort">
+          排序：
+          <select id="sortSelect" class="filters__select">
+            <option value="featured">推薦</option>
+            <option value="newest">最新</option>
+            <option value="alpha">名稱</option>
+          </select>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <section class="works">
+    <div class="container">
+      <div class="works__grid" id="worksGrid"></div>
+      <div class="works__empty" id="worksEmpty" hidden>
+        <span class="works__empty-icon">🔍</span>
+        <h3>沒有符合條件的作品</h3>
+        <p>試試其他關鍵字，或點上方「全部」看看所有作品。</p>
+        <button class="btn btn--ghost" id="resetFilters" data-magnetic>清除所有篩選</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 巨型跑馬燈 #2 ===== -->
+  <section class="marquee marquee--md" aria-hidden="true">
+    <div class="marquee__track marquee__track--alt">
+      <span>★ HALL OF FAME</span><span class="marquee__sep">/</span>
+      <span>名人堂</span><span class="marquee__sep">/</span>
+      <span>FEATURED PROJECTS</span><span class="marquee__sep">/</span>
+      <span>學員精選</span><span class="marquee__sep">/</span>
+      <span>★ HALL OF FAME</span><span class="marquee__sep">/</span>
+      <span>名人堂</span><span class="marquee__sep">/</span>
+      <span>FEATURED PROJECTS</span><span class="marquee__sep">/</span>
+      <span>學員精選</span><span class="marquee__sep">/</span>
+    </div>
+  </section>
+
+  <!-- ===== Hall of Fame ===== -->
+  <section class="hall" id="hall">
+    <div class="container">
+      <p class="hero__eyebrow">
+        <span class="hero__eyebrow-num">04</span>
+        <span class="hero__eyebrow-line"></span>
+        HALL OF FAME
+      </p>
+      <h2 class="achievements__title">本期最受矚目作品</h2>
+      <p class="hall__lead">這些作品已經拿過獎、被業界肯定、進駐企業客戶。隨手點開都能秒懂為什麼。</p>
+    </div>
+    <div class="hall__scroller" id="hallScroller">
+      <div class="hall__track" id="hallTrack"></div>
+    </div>
+  </section>
+
+  <!-- ===== 學員 / 業界見證 ===== -->
+  <section class="voices" id="voices">
+    <div class="container">
+      <p class="hero__eyebrow">
+        <span class="hero__eyebrow-num">05</span>
+        <span class="hero__eyebrow-line"></span>
+        VOICES
+      </p>
+      <h2 class="achievements__title">他們怎麼說</h2>
+      <div class="voices__grid" id="voicesGrid"></div>
+    </div>
+  </section>
+
+  <!-- ===== 巨型跑馬燈 #3 ===== -->
+  <section class="marquee marquee--sm" aria-hidden="true">
+    <div class="marquee__track">
+      <span>結業即上線</span><span class="marquee__sep">●</span>
+      <span>SHIP IT FAST</span><span class="marquee__sep">●</span>
+      <span>不是 PPT 作業</span><span class="marquee__sep">●</span>
+      <span>NO POWERPOINT BS</span><span class="marquee__sep">●</span>
+      <span>結業即上線</span><span class="marquee__sep">●</span>
+      <span>SHIP IT FAST</span><span class="marquee__sep">●</span>
+      <span>不是 PPT 作業</span><span class="marquee__sep">●</span>
+      <span>NO POWERPOINT BS</span><span class="marquee__sep">●</span>
+    </div>
+  </section>
+
+  <!-- ===== About ===== -->
+  <section class="about" id="about">
+    <div class="container">
+      <p class="hero__eyebrow">
+        <span class="hero__eyebrow-num">06</span>
+        <span class="hero__eyebrow-line"></span>
+        ABOUT
+      </p>
+      <div class="about__grid">
+        <div>
+          <h2 class="about__title">為什麼這些作品都<span class="hero__accent">真的上線</span>？</h2>
+          <p class="about__text">
+            未來學院的訓練不是看影片、不是寫作業、不是做投影片。我們要學員從第一週就決定一個要解決的問題，然後在課程結束時，把它變成可被陌生人使用的產品。
+          </p>
+          <p class="about__text">
+            上面 20 個作品都是這樣長出來的。每一個都有真實使用者、真實流量、真實 bug，學員自己處理上線、自己面對使用者回饋、自己迭代。
+          </p>
+        </div>
+        <div class="about__pillars">
+          <div class="pillar">
+            <span class="pillar__num">01</span>
+            <h4>真題目</h4>
+            <p>不是練習題，是學員自己關心的真實問題。</p>
+          </div>
+          <div class="pillar">
+            <span class="pillar__num">02</span>
+            <h4>真上線</h4>
+            <p>結業前必須部署到公開網域，給陌生人使用。</p>
+          </div>
+          <div class="pillar">
+            <span class="pillar__num">03</span>
+            <h4>真迭代</h4>
+            <p>結業後仍持續維護，這裡看到的是進行式。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 品牌進駐 ===== -->
+  <section class="partners" id="partners">
+    <div class="container">
+      <p class="hero__eyebrow">
+        <span class="hero__eyebrow-num">07</span>
+        <span class="hero__eyebrow-line"></span>
+        PARTNERS & PRESS
+      </p>
+      <h2 class="achievements__title">業界都在看</h2>
+      <div class="partners__grid" id="partnersGrid"></div>
+      <div class="press" id="pressList"></div>
+    </div>
+  </section>
+
+  <!-- ===== Final CTA ===== -->
+  <section class="finalcta">
+    <div class="container">
+      <h2 class="finalcta__title">
+        現在<span class="hero__accent">看到</span>的，<br />
+        18 週後可能就是<span class="hero__accent">你</span>的。
+      </h2>
+      <p class="finalcta__lead">第 5 期招生中 · 線上線下混合 · 18 週 · 名額有限</p>
+      <div class="finalcta__row">
+        <a href="#" class="btn btn--primary" data-magnetic>立即報名第 5 期</a>
+        <a href="#" class="btn btn--ghost" data-magnetic>下載完整課程介紹</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer" id="contact">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <a href="#" class="nav__logo">
+            <span class="nav__dot"></span>
+            <span class="nav__brand">未來學院</span>
+          </a>
+          <p class="footer__tag">FUTURE ACADEMY · STUDENT SHOWCASE</p>
+        </div>
+        <div class="footer__col">
+          <h5>聯絡我們</h5>
+          <a href="mailto:hello@future-academy.tw">hello@future-academy.tw</a>
+          <a href="#">+886-2-XXXX-XXXX</a>
+        </div>
+        <div class="footer__col">
+          <h5>社群</h5>
+          <a href="#">Instagram</a>
+          <a href="#">YouTube</a>
+          <a href="#">LinkedIn</a>
+        </div>
+        <div class="footer__col">
+          <h5>說明</h5>
+          <p class="footer__note">所有 demo 帳密皆為公開測試帳號，請勿上傳真實資料。</p>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <span>© 2025 未來學院 Future Academy.</span>
+        <span>Made with ☕ by students.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== 詳情 Modal ===== -->
+  <div class="modal" id="modal" hidden>
+    <div class="modal__backdrop" data-close></div>
+    <div class="modal__panel" role="dialog" aria-modal="true">
+      <button class="modal__close" data-close aria-label="關閉">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div class="modal__body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- ===== Toast ===== -->
+  <div class="toast" id="toast" hidden>已複製</div>
+
+  <script src="data/works.js"></script>
+  <script src="data/extras.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
