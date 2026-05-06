@@ -1752,12 +1752,12 @@ body { cursor: auto; }
 .hero__cta svg { transition: transform 0.25s var(--ease-out); }
 .hero__cta:hover svg { transform: translateX(4px); }
 
-/* 浮動產品 mini cards（hero 右側） */
+/* 浮動產品 mini cards（hero 右側）— 不超出畫面，3 張完整可見 */
 .hero__floats {
   position: absolute;
   top: 80px;
-  right: -40px;
-  width: 360px;
+  right: 16px;
+  width: 320px;
   height: 540px;
   pointer-events: none;
 }
@@ -1780,9 +1780,9 @@ body { cursor: auto; }
 .float-card span { font-size: 26px; }
 .float-card b { display: block; font-size: 14px; color: var(--text-primary); font-weight: 700; }
 .float-card i { display: block; font-style: normal; font-size: 11px; color: var(--accent); }
-.float-card--1 { top: 40px; right: 40px; transform: rotate(-3deg); animation-delay: 0s; }
-.float-card--2 { top: 200px; right: 140px; transform: rotate(4deg); animation-delay: -2s; }
-.float-card--3 { top: 360px; right: 0; transform: rotate(-2deg); animation-delay: -4s; }
+.float-card--1 { top: 40px; right: 0; transform: rotate(-3deg); animation-delay: 0s; }
+.float-card--2 { top: 200px; right: 90px; transform: rotate(4deg); animation-delay: -2s; }
+.float-card--3 { top: 360px; right: 12px; transform: rotate(-2deg); animation-delay: -4s; }
 @keyframes floatY {
   0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
   50% { transform: translateY(-10px) rotate(var(--r, 0deg)); }
