@@ -46,11 +46,11 @@
         <span class="nav__sub">FUTURE ACADEMY</span>
       </a>
       <nav class="nav__menu">
-        <a href="#hero" class="nav__link nav__link--active">作品</a>
-        <a href="#showcase" class="nav__link">分類</a>
-        <a href="#hall" class="nav__link">名人堂</a>
-        <a href="#voices" class="nav__link">見證</a>
-        <a href="#about" class="nav__link">關於</a>
+        <a href="#hero" class="nav__link nav__link--active" data-i18n="navWorks">作品</a>
+        <a href="#showcase" class="nav__link" data-i18n="navCategories">分類</a>
+        <a href="#hall" class="nav__link" data-i18n="navHall">名人堂</a>
+        <a href="#voices" class="nav__link" data-i18n="navVoices">見證</a>
+        <a href="#about" class="nav__link" data-i18n="navAbout">關於</a>
       </nav>
       <div class="nav__actions">
         <button class="nav__search" id="navSearchBtn" aria-label="搜尋" data-magnetic>
@@ -58,12 +58,17 @@
             <circle cx="11" cy="11" r="8"></circle>
             <path d="m21 21-4.35-4.35"></path>
           </svg>
-          <span>搜尋</span>
+          <span data-i18n="navSearch">搜尋</span>
           <kbd>⌘K</kbd>
+        </button>
+        <button class="nav__lang" id="langToggle" aria-label="Switch language" data-magnetic>
+          <span class="nav__lang-cur" id="langCur">中</span>
+          <span class="nav__lang-sep">/</span>
+          <span class="nav__lang-alt" id="langAlt">EN</span>
         </button>
         <span class="nav__status">
           <span class="nav__pulse"></span>
-          學員作品 · LIVE
+          <span data-i18n="navStatus">學員作品 · LIVE</span>
         </span>
       </div>
     </div>
@@ -87,23 +92,19 @@
         <p class="hero__eyebrow">
           <span class="hero__eyebrow-num">01</span>
           <span class="hero__eyebrow-line"></span>
-          STUDENT SHOWCASE / 2025
+          <span data-i18n="heroEyebrow">STUDENT SHOWCASE / 2025</span>
         </p>
       </div>
 
       <h1 class="hero__title" id="heroTitle">
-        <span class="hero__line">不只是<span class="hero__strike">作業</span>，</span>
-        <span class="hero__line">是<span class="hero__accent">上線中</span>的產品。</span>
+        <span class="hero__line"><span data-i18n="heroTitleA">不只是</span><span class="hero__strike" data-i18n="heroTitleStrike">作業</span><span data-i18n="heroTitleB">，</span></span>
+        <span class="hero__line"><span data-i18n="heroTitleC">是</span><span class="hero__accent" data-i18n="heroAccent">上線中</span><span data-i18n="heroTitleD">的產品。</span></span>
       </h1>
 
       <div class="hero__sub">
-        <p class="hero__lead">
-          每一個作品，都是學員在 18 週內從 0 推到上線。<br />
-          不是 PPT、不是 demo、不是「假裝有功能」——<br />
-          是真的可以登入、可以點、有真實使用者在用的東西。
-        </p>
+        <p class="hero__lead" data-i18n="heroLead">每一個作品，都是學員在 18 週內從 0 推到上線。不是 PPT、不是 demo、不是「假裝有功能」——是真的可以登入、可以點、有真實使用者在用的東西。</p>
         <a href="#showcase" class="hero__cta" data-magnetic>
-          看 20 個作品
+          <span data-i18n="heroCta">看 20 個作品</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
       </div>
@@ -112,22 +113,22 @@
       <div class="hero__stats">
         <div class="stat">
           <span class="stat__num" data-target="20">20</span>
-          <span class="stat__label">上線作品</span>
+          <span class="stat__label" data-i18n="statWorks">上線作品</span>
         </div>
         <div class="stat__divider"></div>
         <div class="stat">
           <span class="stat__num" data-target="15">15</span>
-          <span class="stat__label">應用領域</span>
+          <span class="stat__label" data-i18n="statCategories">應用領域</span>
         </div>
         <div class="stat__divider"></div>
         <div class="stat">
           <span class="stat__num" data-target="100" data-suffix="%">100%</span>
-          <span class="stat__label">可登入體驗</span>
+          <span class="stat__label" data-i18n="statLogin">可登入體驗</span>
         </div>
         <div class="stat__divider"></div>
         <div class="stat">
           <span class="stat__num" data-target="0">0</span>
-          <span class="stat__label">PPT 作業</span>
+          <span class="stat__label" data-i18n="statPpt">PPT 作業</span>
         </div>
       </div>
 
@@ -160,9 +161,9 @@
       <p class="hero__eyebrow">
         <span class="hero__eyebrow-num">02</span>
         <span class="hero__eyebrow-line"></span>
-        BY THE NUMBERS
+        <span data-i18n="achEyebrow">BY THE NUMBERS</span>
       </p>
-      <h2 class="achievements__title">數字會說話</h2>
+      <h2 class="achievements__title" data-i18n="achTitle">數字會說話</h2>
       <div class="achievements__grid" id="achievementsGrid">
         <!-- JS 注入 -->
       </div>
@@ -175,16 +176,16 @@
       <p class="hero__eyebrow">
         <span class="hero__eyebrow-num">03</span>
         <span class="hero__eyebrow-line"></span>
-        ALL PROJECTS
+        <span data-i18n="projectsEyebrow">ALL PROJECTS</span>
       </p>
-      <h2 class="achievements__title">20 個作品 · 都能登入</h2>
+      <h2 class="achievements__title" data-i18n="projectsTitle">20 個作品 · 都能登入</h2>
 
       <div class="search">
         <svg class="search__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="11" cy="11" r="8"></circle>
           <path d="m21 21-4.35-4.35"></path>
         </svg>
-        <input type="text" id="searchInput" class="search__input" placeholder="搜尋作品、領域、技術…（試試「電商」「AI」「Next.js」）" autocomplete="off" />
+        <input type="text" id="searchInput" class="search__input" data-i18n-placeholder="searchPlaceholder" placeholder="搜尋作品、領域、技術…（試試「電商」「AI」「Next.js」）" autocomplete="off" />
         <button class="search__clear" id="searchClear" aria-label="清除" hidden>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -196,13 +197,13 @@
       <div class="pills" id="categoryPills"></div>
 
       <div class="filters__meta">
-        <span id="resultCount">顯示全部作品</span>
+        <span id="resultCount" data-i18n="resultDefault">顯示全部作品</span>
         <span class="filters__sort">
-          排序：
+          <span data-i18n="sortLabel">排序：</span>
           <select id="sortSelect" class="filters__select">
-            <option value="featured">推薦</option>
-            <option value="newest">最新</option>
-            <option value="alpha">名稱</option>
+            <option value="featured" data-i18n="sortFeatured">推薦</option>
+            <option value="newest" data-i18n="sortNewest">最新</option>
+            <option value="alpha" data-i18n="sortAlpha">名稱</option>
           </select>
         </span>
       </div>
@@ -214,9 +215,9 @@
       <div class="works__grid" id="worksGrid"></div>
       <div class="works__empty" id="worksEmpty" hidden>
         <span class="works__empty-icon">🔍</span>
-        <h3>沒有符合條件的作品</h3>
-        <p>試試其他關鍵字，或點上方「全部」看看所有作品。</p>
-        <button class="btn btn--ghost" id="resetFilters" data-magnetic>清除所有篩選</button>
+        <h3 data-i18n="emptyTitle">沒有符合條件的作品</h3>
+        <p data-i18n="emptyDesc">試試其他關鍵字，或點上方「全部」看看所有作品。</p>
+        <button class="btn btn--ghost" id="resetFilters" data-magnetic data-i18n="emptyReset">清除所有篩選</button>
       </div>
     </div>
   </section>
@@ -241,10 +242,10 @@
       <p class="hero__eyebrow">
         <span class="hero__eyebrow-num">04</span>
         <span class="hero__eyebrow-line"></span>
-        HALL OF FAME
+        <span data-i18n="hallEyebrow">HALL OF FAME</span>
       </p>
-      <h2 class="achievements__title">本期最受矚目作品</h2>
-      <p class="hall__lead">這些作品已經拿過獎、被業界肯定、進駐企業客戶。隨手點開都能秒懂為什麼。</p>
+      <h2 class="achievements__title" data-i18n="hallTitle">本期最受矚目作品</h2>
+      <p class="hall__lead" data-i18n="hallLead">這些作品已經拿過獎、被業界肯定、進駐企業客戶。隨手點開都能秒懂為什麼。</p>
     </div>
     <div class="hall__scroller" id="hallScroller">
       <div class="hall__track" id="hallTrack"></div>
@@ -257,9 +258,9 @@
       <p class="hero__eyebrow">
         <span class="hero__eyebrow-num">05</span>
         <span class="hero__eyebrow-line"></span>
-        VOICES
+        <span data-i18n="voicesEyebrow">VOICES</span>
       </p>
-      <h2 class="achievements__title">他們怎麼說</h2>
+      <h2 class="achievements__title" data-i18n="voicesTitle">他們怎麼說</h2>
       <div class="voices__grid" id="voicesGrid"></div>
     </div>
   </section>
@@ -284,33 +285,29 @@
       <p class="hero__eyebrow">
         <span class="hero__eyebrow-num">06</span>
         <span class="hero__eyebrow-line"></span>
-        ABOUT
+        <span data-i18n="aboutEyebrow">ABOUT</span>
       </p>
       <div class="about__grid">
         <div>
-          <h2 class="about__title">為什麼這些作品都<span class="hero__accent">真的上線</span>？</h2>
-          <p class="about__text">
-            未來學院的訓練不是看影片、不是寫作業、不是做投影片。我們要學員從第一週就決定一個要解決的問題，然後在課程結束時，把它變成可被陌生人使用的產品。
-          </p>
-          <p class="about__text">
-            上面 20 個作品都是這樣長出來的。每一個都有真實使用者、真實流量、真實 bug，學員自己處理上線、自己面對使用者回饋、自己迭代。
-          </p>
+          <h2 class="about__title"><span data-i18n="aboutTitleA">為什麼這些作品都</span><span class="hero__accent" data-i18n="aboutTitleAccent">真的上線</span><span data-i18n="aboutTitleB">？</span></h2>
+          <p class="about__text" data-i18n="aboutP1">未來學院的訓練不是看影片、不是寫作業、不是做投影片。我們要學員從第一週就決定一個要解決的問題，然後在課程結束時，把它變成可被陌生人使用的產品。</p>
+          <p class="about__text" data-i18n="aboutP2">上面 20 個作品都是這樣長出來的。每一個都有真實使用者、真實流量、真實 bug，學員自己處理上線、自己面對使用者回饋、自己迭代。</p>
         </div>
         <div class="about__pillars">
           <div class="pillar">
             <span class="pillar__num">01</span>
-            <h4>真題目</h4>
-            <p>不是練習題，是學員自己關心的真實問題。</p>
+            <h4 data-i18n="pillar1Title">真題目</h4>
+            <p data-i18n="pillar1Desc">不是練習題，是學員自己關心的真實問題。</p>
           </div>
           <div class="pillar">
             <span class="pillar__num">02</span>
-            <h4>真上線</h4>
-            <p>結業前必須部署到公開網域，給陌生人使用。</p>
+            <h4 data-i18n="pillar2Title">真上線</h4>
+            <p data-i18n="pillar2Desc">結業前必須部署到公開網域，給陌生人使用。</p>
           </div>
           <div class="pillar">
             <span class="pillar__num">03</span>
-            <h4>真迭代</h4>
-            <p>結業後仍持續維護，這裡看到的是進行式。</p>
+            <h4 data-i18n="pillar3Title">真迭代</h4>
+            <p data-i18n="pillar3Desc">結業後仍持續維護，這裡看到的是進行式。</p>
           </div>
         </div>
       </div>
@@ -323,9 +320,9 @@
       <p class="hero__eyebrow">
         <span class="hero__eyebrow-num">07</span>
         <span class="hero__eyebrow-line"></span>
-        PARTNERS & PRESS
+        <span data-i18n="partnersEyebrow">PARTNERS & PRESS</span>
       </p>
-      <h2 class="achievements__title">業界都在看</h2>
+      <h2 class="achievements__title" data-i18n="partnersTitle">業界都在看</h2>
       <div class="partners__grid" id="partnersGrid"></div>
       <div class="press" id="pressList"></div>
     </div>
@@ -335,13 +332,13 @@
   <section class="finalcta">
     <div class="container">
       <h2 class="finalcta__title">
-        現在<span class="hero__accent">看到</span>的，<br />
-        18 週後可能就是<span class="hero__accent">你</span>的。
+        <span data-i18n="ctaTitleA">現在</span><span class="hero__accent" data-i18n="ctaTitleAccent1">看到</span><span data-i18n="ctaTitleB">的，</span><br />
+        <span data-i18n="ctaTitleC">18 週後可能就是</span><span class="hero__accent" data-i18n="ctaTitleAccent2">你</span><span data-i18n="ctaTitleD">的。</span>
       </h2>
-      <p class="finalcta__lead">第 5 期招生中 · 線上線下混合 · 18 週 · 名額有限</p>
+      <p class="finalcta__lead" data-i18n="ctaLead">第 5 期招生中 · 線上線下混合 · 18 週 · 名額有限</p>
       <div class="finalcta__row">
-        <a href="#" class="btn btn--primary" data-magnetic>立即報名第 5 期</a>
-        <a href="#" class="btn btn--ghost" data-magnetic>下載完整課程介紹</a>
+        <a href="#" class="btn btn--primary" data-magnetic data-i18n="ctaPrimary">立即報名第 5 期</a>
+        <a href="#" class="btn btn--ghost" data-magnetic data-i18n="ctaSecondary">下載完整課程介紹</a>
       </div>
     </div>
   </section>
@@ -358,19 +355,19 @@
           <p class="footer__tag">FUTURE ACADEMY · STUDENT SHOWCASE</p>
         </div>
         <div class="footer__col">
-          <h5>聯絡我們</h5>
+          <h5 data-i18n="footerContact">聯絡我們</h5>
           <a href="mailto:hello@future-academy.tw">hello@future-academy.tw</a>
           <a href="#">+886-2-XXXX-XXXX</a>
         </div>
         <div class="footer__col">
-          <h5>社群</h5>
+          <h5 data-i18n="footerSocial">社群</h5>
           <a href="#">Instagram</a>
           <a href="#">YouTube</a>
           <a href="#">LinkedIn</a>
         </div>
         <div class="footer__col">
-          <h5>說明</h5>
-          <p class="footer__note">所有 demo 帳密皆為公開測試帳號，請勿上傳真實資料。</p>
+          <h5 data-i18n="footerNote">說明</h5>
+          <p class="footer__note" data-i18n="footerNoteText">所有 demo 帳密皆為公開測試帳號，請勿上傳真實資料。</p>
         </div>
       </div>
       <div class="footer__bottom">
@@ -397,8 +394,19 @@
   <!-- ===== Toast ===== -->
   <div class="toast" id="toast" hidden>已複製</div>
 
-  <script src="data/works.js"></script>
-  <script src="data/extras.js"></script>
-  <script src="script.js"></script>
+  <!-- Lenis Smooth Scroll（炫砲級平滑滾動） -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+  <script>
+    if (window.Lenis && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const lenis = new window.Lenis({ duration: 1.2, smoothWheel: true, lerp: 0.1 });
+      function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+      requestAnimationFrame(raf);
+      window.__lenis = lenis;
+    }
+  </script>
+
+  <script src="data/works.js?v=3"></script>
+  <script src="data/extras.js?v=3"></script>
+  <script src="script.js?v=4"></script>
 </body>
 </html>
