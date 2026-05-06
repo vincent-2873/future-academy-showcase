@@ -1680,14 +1680,19 @@ body { cursor: auto; }
 
 /* === Hero 升級：strike 線、新版排版、CTA、浮動 mini cards === */
 .hero { padding: 80px 0 100px; position: relative; overflow: visible; }
+@media (max-width: 720px) { .hero { padding: 48px 0 60px; } }
 .hero__head { margin-bottom: 24px; }
 .hero__title {
-  font-size: clamp(56px, 9vw, 132px);
+  font-size: clamp(40px, 9vw, 132px);
   font-weight: 900;
   line-height: 0.95;
   letter-spacing: -0.035em;
-  margin: 0 0 56px;
+  margin: 0 0 40px;
   font-family: var(--font-zh);
+  word-break: break-word;
+}
+@media (max-width: 720px) {
+  .hero__title { line-height: 1.1; margin-bottom: 28px; }
 }
 .hero__line { display: block; overflow: hidden; }
 .hero__strike {
@@ -1858,36 +1863,47 @@ body { cursor: auto; }
   -webkit-backdrop-filter: blur(20px);
   overflow: hidden;
 }
-@media (max-width: 980px) { .achievements__grid { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 540px) { .achievements__grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 1180px) { .achievements__grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 720px) { .achievements__grid { grid-template-columns: repeat(2, 1fr); } }
+.ach { padding: 28px 20px; }
+@media (max-width: 720px) { .ach { padding: 22px 16px; } }
+@media (max-width: 480px) { .ach { padding: 18px 14px; } }
 .ach {
-  padding: 36px 24px;
   border-right: 1px solid var(--border-soft);
   text-align: left;
   transition: background 0.3s;
+  min-width: 0;
 }
 .ach:hover { background: rgba(107, 255, 142, 0.04); }
 .ach:last-child { border-right: none; }
-@media (max-width: 980px) {
+@media (max-width: 1180px) {
   .ach:nth-child(3n) { border-right: none; }
   .ach:nth-child(-n+3) { border-bottom: 1px solid var(--border-soft); }
 }
-@media (max-width: 540px) {
+@media (max-width: 720px) {
+  .ach:nth-child(3n) { border-right: 1px solid var(--border-soft); }
+  .ach:nth-child(-n+3) { border-bottom: 1px solid var(--border-soft); }
   .ach:nth-child(odd) { border-right: 1px solid var(--border-soft); }
   .ach:nth-child(even) { border-right: none; }
   .ach:not(:nth-last-child(-n+2)) { border-bottom: 1px solid var(--border-soft); }
 }
 .ach__num {
-  display: block;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: nowrap;
+  white-space: nowrap;
   font-family: 'Space Grotesk', var(--font-sans);
-  font-size: clamp(36px, 4vw, 56px);
+  font-size: clamp(28px, 3.4vw, 48px);
   font-weight: 700;
   letter-spacing: -0.025em;
   color: var(--text-primary);
-  line-height: 1;
+  line-height: 1.05;
   margin-bottom: 8px;
 }
-.ach__suffix { font-size: 0.5em; color: var(--accent); font-weight: 600; margin-left: 4px; }
+.ach__prefix { font-size: 0.55em; color: var(--text-tertiary); font-weight: 600; margin-right: 2px; flex-shrink: 0; }
+.ach__main { flex-shrink: 0; }
+.ach__unit { font-size: 0.55em; color: var(--text-secondary); font-weight: 500; margin-left: 1px; flex-shrink: 0; }
+.ach__suffix { font-size: 0.45em; color: var(--accent); font-weight: 700; margin-left: 3px; flex-shrink: 0; }
 .ach__lab {
   font-size: 12px;
   font-weight: 600;

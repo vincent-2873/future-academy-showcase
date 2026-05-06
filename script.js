@@ -884,15 +884,21 @@
       { num: a.cohorts, suffix: isEn ? '' : '期', label: t('achCohorts') },
     ];
     $grid.innerHTML = items.map((it) => {
-      let num = it.num;
+      let main = it.num;
+      let unit = '';
       if (it.format === 'short') {
-        if (num >= 1000000) num = (num / 1000000).toFixed(1) + 'M';
-        else if (num >= 10000) num = isEn ? (num / 1000).toFixed(0) + 'K' : (num / 10000).toFixed(1) + '萬';
-        else if (num >= 1000) num = (num / 1000).toFixed(1) + 'K';
+        if (it.num >= 1000000) { main = (it.num / 1000000).toFixed(1); unit = 'M'; }
+        else if (it.num >= 10000) {
+          if (isEn) { main = (it.num / 1000).toFixed(0); unit = 'K'; }
+          else { main = (it.num / 10000).toFixed(1); unit = '萬'; }
+        } else if (it.num >= 1000) { main = (it.num / 1000).toFixed(1); unit = 'K'; }
       } else {
-        num = num.toLocaleString();
+        main = it.num.toLocaleString();
       }
-      return `<div class="ach"><span class="ach__num">${it.prefix || ''}${num}<span class="ach__suffix">${it.suffix}</span></span><span class="ach__lab">${escapeHtml(it.label)}</span></div>`;
+      const prefix = it.prefix ? `<span class="ach__prefix">${it.prefix}</span>` : '';
+      const unitHtml = unit ? `<span class="ach__unit">${unit}</span>` : '';
+      const suffixHtml = it.suffix ? `<span class="ach__suffix">${it.suffix}</span>` : '';
+      return `<div class="ach"><span class="ach__num">${prefix}<span class="ach__main">${main}</span>${unitHtml}${suffixHtml}</span><span class="ach__lab">${escapeHtml(it.label)}</span></div>`;
     }).join('');
   }
 
