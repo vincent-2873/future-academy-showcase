@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="demo.css?v=5" />
+  <link rel="stylesheet" href="demo.css?v=6" />
 </head>
 <body>
   <div class="page" id="page" hidden>
@@ -109,9 +109,29 @@
       </div>
 
       <!-- 浮動 + 新增 FAB -->
-      <button class="app__fab" title="快速新增" aria-label="新增">
+      <button class="app__fab" title="快速新增" aria-label="新增" id="appFab">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       </button>
+
+      <!-- FAB 快速建立彈出選單 -->
+      <div class="fab-menu" id="fabMenu" hidden>
+        <div class="fab-menu__head">快速建立</div>
+        <div class="fab-menu__list" id="fabMenuList"></div>
+      </div>
+
+      <!-- 滑入式詳細面板 -->
+      <div class="drawer" id="appDrawer" hidden>
+        <div class="drawer__backdrop" data-close></div>
+        <aside class="drawer__panel">
+          <button class="drawer__close" data-close aria-label="關閉">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          <div class="drawer__body" id="drawerBody"></div>
+        </aside>
+      </div>
+
+      <!-- 通知 toast -->
+      <div class="app-toast" id="appToast" hidden></div>
 
       <!-- 底部水印 -->
       <footer class="app__foot">
@@ -123,6 +143,6 @@
   </div>
 
   <script src="../data/works.js?v=10"></script>
-  <script src="demo.js?v=5"></script>
+  <script src="demo.js?v=7"></script>
 </body>
 </html>

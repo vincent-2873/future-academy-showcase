@@ -949,6 +949,396 @@
     startTickers();
     setupSparklines();
     injectTerminal();
+    setupDrawer();
+    setupSearch();
+    setupFab();
+    setupChatInput();
+    injectGauges();
+    setupKanbanDrag();
+  }
+
+  // ============================================================
+  // 互動：Drawer 滑入詳細面板
+  // ============================================================
+  function setupDrawer() {
+    const $drawer = document.getElementById('appDrawer');
+    const $body = document.getElementById('drawerBody');
+    if (!$drawer || !$body) return;
+
+    function open(payload) {
+      const [g1, g2] = work.gradient;
+      $body.innerHTML = `
+        <div class="drawer__cover" style="background:linear-gradient(135deg,${g1},${g2})">${payload.icon || work.icon}</div>
+        <h2 class="drawer__title">${payload.title}</h2>
+        <p class="drawer__sub">${payload.sub || work.title}</p>
+        <div class="drawer__section">
+          <p class="drawer__section-title">基本資訊</p>
+          ${payload.fields.map(([k, v]) => `<div class="drawer__row"><span class="drawer__row-key">${k}</span><span class="drawer__row-val">${v}</span></div>`).join('')}
+        </div>
+        ${payload.activity ? `
+          <div class="drawer__section">
+            <p class="drawer__section-title">最近活動</p>
+            ${payload.activity.map((a) => `<div class="drawer__row"><span class="drawer__row-key">${a[0]}</span><span class="drawer__row-val">${a[1]}</span></div>`).join('')}
+          </div>` : ''}
+        <div class="drawer__btns">
+          <button class="drawer__btn drawer__btn--primary">${payload.cta || '查看完整'}</button>
+          <button class="drawer__btn drawer__btn--ghost" data-close>關閉</button>
+        </div>
+      `;
+      $drawer.hidden = false;
+      document.body.style.overflow = 'hidden';
+    }
+    function close() { $drawer.hidden = true; document.body.style.overflow = ''; }
+
+    $drawer.addEventListener('click', (e) => { if (e.target.dataset.close !== undefined || e.target.closest('[data-close]')) close(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$drawer.hidden) close(); });
+
+    // 委派：點 row / tile / kanban__card / market-card / moodcard / book → 開 drawer
+    document.getElementById('appMain').addEventListener('click', (e) => {
+      const row = e.target.closest('.row, .tile, .kanban__card, .market-card, .moodcard, .book');
+      if (!row) return;
+      // 不要攔截特定按鈕
+      if (e.target.closest('button, a, .panel__action')) return;
+      const title = row.querySelector('.row__title, .tile__val, .kanban__card-title, .market-card__title, .book__title, .moodcard__lab')?.textContent.trim() || '詳細資料';
+      const meta = row.querySelector('.row__meta, .tile__lab, .kanban__card-meta, .market-card__seller')?.textContent.trim() || '';
+      const icon = row.querySelector('.row__icon, .tile__icon, .market-card__icon')?.textContent.trim() || work.icon;
+      // 偽造一些欄位
+      const idHash = '#' + Math.random().toString(36).slice(2, 10).toUpperCase();
+      open({
+        icon, title, sub: meta || work.subtitle,
+        fields: [
+          ['ID', idHash],
+          ['建立時間', new Date(Date.now() - Math.random() * 86400000 * 30).toLocaleDateString('zh-TW')],
+          ['狀態', '<span style="color:var(--accent)">● 啟用中</span>'],
+          ['擁有者', work.student.name],
+          ['可見度', '組織內可見'],
+        ],
+        activity: [
+          [new Date(Date.now() - 60000 * 5).toLocaleTimeString('zh-TW', {hour:'2-digit',minute:'2-digit'}), '已更新'],
+          [new Date(Date.now() - 60000 * 47).toLocaleTimeString('zh-TW', {hour:'2-digit',minute:'2-digit'}), '已分享'],
+          [new Date(Date.now() - 60000 * 124).toLocaleTimeString('zh-TW', {hour:'2-digit',minute:'2-digit'}), '已建立'],
+        ],
+        cta: '在新分頁開啟',
+      });
+    });
+  }
+
+  // ============================================================
+  // 互動：搜尋過濾列表
+  // ============================================================
+  function setupSearch() {
+    const $input = document.getElementById('appSearch');
+    if (!$input) return;
+    $input.addEventListener('input', (e) => {
+      const k = e.target.value.toLowerCase().trim();
+      document.querySelectorAll('.app__main .row, .app__main .tile, .app__main .market-card, .app__main .kanban__card').forEach((el) => {
+        if (!k) { el.style.display = ''; return; }
+        const txt = el.textContent.toLowerCase();
+        el.style.display = txt.includes(k) ? '' : 'none';
+      });
+    });
+  }
+
+  // ============================================================
+  // 互動：Tab 切換 — 顯示不同內容
+  // ============================================================
+  function setupTabs() {
+    const $tabs = document.getElementById('appTabs');
+    const $main = document.getElementById('appMain');
+    if (!$tabs || !$main) return;
+    let originalContent = null;
+    $tabs.addEventListener('click', (e) => {
+      const btn = e.target.closest('.app__tab');
+      if (!btn) return;
+      $tabs.querySelectorAll('.app__tab--active').forEach((el) => el.classList.remove('app__tab--active'));
+      btn.classList.add('app__tab--active');
+      const tab = btn.dataset.tab;
+      if (originalContent === null && tab !== 'overview') originalContent = $main.innerHTML;
+      $main.style.opacity = '0';
+      setTimeout(() => {
+        if (tab === 'overview') {
+          if (originalContent) $main.innerHTML = originalContent;
+          // 重綁 LiveFX 的子元素
+          enhanceMainPanel();
+          injectGauges();
+          setupKanbanDrag();
+        } else if (tab === 'detail') {
+          $main.innerHTML = renderDetailTable();
+        } else if (tab === 'trend') {
+          $main.innerHTML = renderTrendCharts();
+        } else if (tab === 'settings') {
+          $main.innerHTML = renderSettingsForm();
+        }
+        $main.style.opacity = '1';
+      }, 180);
+    });
+  }
+
+  function renderDetailTable() {
+    const labels = {
+      '電商': ['訂單編號', '客戶', '商品', '金額', '狀態'],
+      '餐飲': ['訂單', '桌號', '品項', '金額', '狀態'],
+      '影音': ['影片名稱', '時長', '狀態', '觀看數', '產生時間'],
+      'AI 應用': ['對話 ID', '客戶', '處理時間', 'tokens', '狀態'],
+    }[work.category] || ['ID', '名稱', '建立者', '時間', '狀態'];
+    const rows = Array.from({length: 12}, (_, i) => {
+      const id = '#' + (Math.random().toString(36).slice(2, 8).toUpperCase());
+      const name = ['咖啡豆組', '陶瓷杯具', '橄欖油禮盒', '手沖壺', '茶葉禮盒', '梨山高山茶', '巧克力組合', '蜂蜜禮盒'][i % 8];
+      const customer = ['林佳穎', '黃柏勳', '陳語安', '吳子瑜', '張承恩'][i % 5];
+      const amount = (Math.floor(Math.random() * 4000) + 800).toLocaleString();
+      const statuses = [['已完成', 'pos'], ['處理中', 'num'], ['配送中', 'num'], ['已退貨', 'neg']];
+      const st = statuses[i % statuses.length];
+      return `<tr><td class="num">${id}</td><td>${customer}</td><td>${name}</td><td class="num">NT$ ${amount}</td><td class="${st[1]}">● ${st[0]}</td></tr>`;
+    }).join('');
+    return `
+      <div class="tab-content">
+        <div class="panel">
+          <div class="panel__head">
+            <h3 class="panel__title"><span class="panel__title-dot"></span>明細列表</h3>
+            <span class="panel__sub">共 12 筆 · 顯示第 1–12</span>
+          </div>
+          <table class="data-table">
+            <thead><tr>${labels.map((l) => `<th>${l}</th>`).join('')}</tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderTrendCharts() {
+    return `
+      <div class="tab-content">
+        <div class="dash">
+          <div class="dash__col">
+            <div class="panel"><div class="panel__head"><h3 class="panel__title">過去 30 天 趨勢</h3><span class="panel__sub">日</span></div>${chartLine([28, 32, 35, 30, 42, 48, 45, 50, 55, 52, 60, 58, 65, 70, 68, 72, 75, 78, 80, 82, 85, 88, 90, 92, 95, 98, 100, 102, 105, 108])}</div>
+            <div class="panel"><div class="panel__head"><h3 class="panel__title">小時別熱區</h3><span class="panel__sub">最近 24h</span></div>
+              <div style="display:grid;grid-template-columns:repeat(24,1fr);gap:3px;margin-top:14px">
+                ${Array.from({length: 24}, (_, i) => {
+                  const intensity = (Math.sin(i / 24 * Math.PI * 2) + 1) / 2 * 0.7 + Math.random() * 0.3;
+                  return `<div style="height:24px;background:rgba(107,255,142,${intensity.toFixed(2)});border-radius:3px;display:flex;align-items:flex-end;justify-content:center;font-size:9px;color:var(--text-tertiary);padding:2px;font-family:var(--font-mono)">${i}</div>`;
+                }).join('')}
+              </div>
+            </div>
+          </div>
+          <div class="dash__col">
+            <div class="panel"><div class="panel__head"><h3 class="panel__title">統計摘要</h3></div>
+              <div class="kpis" style="grid-template-columns:1fr">
+                <div class="kpi"><p class="kpi__lab">平均</p><p class="kpi__val">68.4</p></div>
+                <div class="kpi"><p class="kpi__lab">中位數</p><p class="kpi__val">72</p></div>
+                <div class="kpi"><p class="kpi__lab">標準差</p><p class="kpi__val">14.2</p></div>
+              </div>
+            </div>
+            <div class="panel"><div class="panel__head"><h3 class="panel__title">同比 / 環比</h3></div>
+              <div style="font-family:var(--font-mono);font-size:12.5px;line-height:2;color:var(--text-secondary)">
+                <div style="display:flex;justify-content:space-between"><span>YoY</span><span style="color:var(--accent)">+34.2%</span></div>
+                <div style="display:flex;justify-content:space-between"><span>MoM</span><span style="color:var(--accent)">+8.1%</span></div>
+                <div style="display:flex;justify-content:space-between"><span>WoW</span><span style="color:#FB7185">-2.4%</span></div>
+                <div style="display:flex;justify-content:space-between"><span>p95</span><span>92.1</span></div>
+                <div style="display:flex;justify-content:space-between"><span>p99</span><span>108.4</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderSettingsForm() {
+    return `
+      <div class="tab-content">
+        <div class="settings">
+          <div class="settings__nav">
+            <div class="settings__nav-item settings__nav-item--active">一般</div>
+            <div class="settings__nav-item">通知</div>
+            <div class="settings__nav-item">外觀</div>
+            <div class="settings__nav-item">整合</div>
+            <div class="settings__nav-item">API & Webhook</div>
+            <div class="settings__nav-item">帳單</div>
+            <div class="settings__nav-item">安全</div>
+            <div class="settings__nav-item">資料匯出</div>
+          </div>
+          <div class="settings__form">
+            <div class="settings__group">
+              <h4 class="settings__group-title">工作區</h4>
+              <div class="settings__row"><div><div class="settings__row-label">工作區名稱</div><div class="settings__row-meta">顯示在 sidebar 和 navbar</div></div><span style="font-family:var(--font-mono);color:var(--text-secondary);font-size:13px">${work.title}</span></div>
+              <div class="settings__row"><div><div class="settings__row-label">時區</div><div class="settings__row-meta">影響所有時間顯示</div></div><span style="font-family:var(--font-mono);color:var(--text-secondary);font-size:13px">Asia/Taipei (UTC+8)</span></div>
+              <div class="settings__row"><div><div class="settings__row-label">語言</div><div class="settings__row-meta">介面顯示語言</div></div><span style="font-family:var(--font-mono);color:var(--text-secondary);font-size:13px">繁體中文</span></div>
+            </div>
+            <div class="settings__group">
+              <h4 class="settings__group-title">通知</h4>
+              <div class="settings__row"><div><div class="settings__row-label">電子郵件通知</div><div class="settings__row-meta">每日彙整重要事件</div></div><div class="toggle toggle--on" data-toggle></div></div>
+              <div class="settings__row"><div><div class="settings__row-label">即時推播</div><div class="settings__row-meta">在瀏覽器中接收</div></div><div class="toggle toggle--on" data-toggle></div></div>
+              <div class="settings__row"><div><div class="settings__row-label">每週報表</div><div class="settings__row-meta">每週一早上寄送</div></div><div class="toggle" data-toggle></div></div>
+              <div class="settings__row"><div><div class="settings__row-label">行銷信件</div><div class="settings__row-meta">產品更新、活動</div></div><div class="toggle" data-toggle></div></div>
+            </div>
+            <div class="settings__group">
+              <h4 class="settings__group-title">資料 & 隱私</h4>
+              <div class="settings__row"><div><div class="settings__row-label">使用情況遙測</div><div class="settings__row-meta">幫助我們改善產品</div></div><div class="toggle toggle--on" data-toggle></div></div>
+              <div class="settings__row"><div><div class="settings__row-label">資料保留期限</div><div class="settings__row-meta">超過將自動清除</div></div><span style="font-family:var(--font-mono);color:var(--text-secondary);font-size:13px">90 天</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ============================================================
+  // 互動：FAB 快速建立選單
+  // ============================================================
+  function setupFab() {
+    const $fab = document.getElementById('appFab');
+    const $menu = document.getElementById('fabMenu');
+    const $list = document.getElementById('fabMenuList');
+    if (!$fab || !$menu || !$list) return;
+    const ITEMS = {
+      '電商': [['🛍️', '新增商品', '⌘P'], ['🏷️', '新增優惠券', '⌘D'], ['📧', '建立行銷活動', '⌘M'], ['👥', '新增客戶', '⌘U']],
+      '餐飲': [['🍱', '新增菜色', '⌘N'], ['🪑', '新增桌位', '⌘T'], ['📅', '建立訂位', '⌘R'], ['🎉', '建立活動', '⌘E']],
+      '影音': [['🎬', '新建影片', '⌘N'], ['📝', '新建腳本', '⌘S'], ['🎙️', '錄製音色', '⌘V'], ['🎨', '新建模板', '⌘T']],
+      'AI 應用': [['💬', '新對話', '⌘N'], ['🤖', '部署 Agent', '⌘A'], ['📚', '上傳知識', '⌘K'], ['🔧', '建立工具', '⌘T']],
+      '個人財務': [['💸', '新增交易', '⌘N'], ['🎯', '建立目標', '⌘G'], ['🏦', '連結帳戶', '⌘L'], ['📊', '匯出報表', '⌘E']],
+      '健康': [['🍱', '記錄飲食', '⌘F'], ['🏃', '記錄運動', '⌘E'], ['💤', '記錄睡眠', '⌘S'], ['📊', '查看報告', '⌘R']],
+    };
+    const items = ITEMS[work.category] || [['📝', '新建項目', '⌘N'], ['📁', '新建資料夾', '⌘D'], ['👥', '邀請成員', '⌘I'], ['⚙️', '快速設定', '⌘,']];
+    $list.innerHTML = items.map(([icon, label, shortcut]) => `<div class="fab-menu__item"><span class="fab-menu__item-icon">${icon}</span><span>${label}</span><span class="fab-menu__item-shortcut">${shortcut}</span></div>`).join('');
+
+    $fab.addEventListener('click', (e) => { e.stopPropagation(); $menu.hidden = !$menu.hidden; });
+    $list.addEventListener('click', (e) => {
+      const item = e.target.closest('.fab-menu__item');
+      if (!item) return;
+      $menu.hidden = true;
+      showToast('已建立 · ' + item.querySelector('span:nth-child(2)').textContent);
+    });
+    document.addEventListener('click', (e) => { if (!$menu.hidden && !e.target.closest('.fab-menu, .app__fab')) $menu.hidden = true; });
+
+    // toggle 點擊切換狀態
+    document.addEventListener('click', (e) => {
+      const t = e.target.closest('[data-toggle]');
+      if (t) t.classList.toggle('toggle--on');
+    });
+  }
+
+  function showToast(msg) {
+    const $t = document.getElementById('appToast');
+    if (!$t) return;
+    $t.textContent = msg;
+    $t.hidden = false;
+    clearTimeout($t._tm);
+    $t._tm = setTimeout(() => ($t.hidden = true), 2200);
+  }
+
+  // ============================================================
+  // 互動：Oasis AI 對話真的會回應
+  // ============================================================
+  function setupChatInput() {
+    if (work.category !== 'AI 應用') return;
+    const $main = document.getElementById('appMain');
+    if (!$main) return;
+    // 找對話 panel（有 .msg 的那個）
+    const chatPanel = Array.from($main.querySelectorAll('.panel')).find((p) => p.querySelector('.msg'));
+    if (!chatPanel) return;
+    const inputBar = document.createElement('div');
+    inputBar.className = 'chat-input';
+    inputBar.innerHTML = `
+      <input type="text" placeholder="輸入訊息按 Enter 送出…" />
+      <button>送出</button>
+    `;
+    chatPanel.appendChild(inputBar);
+    const $input = inputBar.querySelector('input');
+    const $btn = inputBar.querySelector('button');
+    function send() {
+      const text = $input.value.trim();
+      if (!text) return;
+      $input.value = '';
+      // 1. 顯示使用者訊息
+      const userMsg = document.createElement('div');
+      userMsg.className = 'msg';
+      userMsg.innerHTML = `<span class="msg__avatar">客</span><div class="msg__bubble">${escapeHtml(text)}</div>`;
+      // 在對話 panel 末尾、輸入框前插入
+      chatPanel.insertBefore(userMsg, inputBar);
+      // 2. 顯示 AI typing
+      const typing = document.createElement('div');
+      typing.className = 'msg';
+      typing.innerHTML = `<span class="msg__avatar msg__avatar--ai">AI</span><div class="msg__bubble msg__bubble--ai"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
+      chatPanel.insertBefore(typing, inputBar);
+      // 3. 1.4s 後 AI 回應
+      setTimeout(() => {
+        const REPLIES = [
+          '好的，馬上幫您處理！我已查到相關資料，請給我一秒分析最佳方案 ✨',
+          '我聽到您的問題了，根據過去 30 天的紀錄，建議的解法是...',
+          '已為您升級為 VIP 客戶 🎁 後續會有專人聯絡，並補寄一張優惠券',
+          '收到！我會把這次對話摘要寄給您的信箱，您可以隨時回顧 📧',
+          '了解您的需求。我已經把訂單狀態更新為「優先處理」，物流會加急',
+        ];
+        typing.innerHTML = `<span class="msg__avatar msg__avatar--ai">AI</span><div class="msg__bubble msg__bubble--ai">${REPLIES[Math.floor(Math.random() * REPLIES.length)]}</div>`;
+      }, 1400);
+    }
+    $btn.addEventListener('click', send);
+    $input.addEventListener('keydown', (e) => { if (e.key === 'Enter') send(); });
+  }
+
+  // ============================================================
+  // 互動：環形 Gauge（CPU / GPU / Memory）
+  // ============================================================
+  function injectGauges() {
+    const techCats = ['AI 應用', '自動化', '工具'];
+    if (!techCats.includes(work.category)) return;
+    const $main = document.getElementById('appMain');
+    if (!$main) return;
+    if ($main.querySelector('.gauges-grid')) return; // 已注入
+    const last = $main.querySelector('.dash > .dash__col:last-child');
+    if (!last) return;
+    const panel = document.createElement('div');
+    panel.className = 'panel';
+    panel.innerHTML = `
+      <div class="panel__head"><h3 class="panel__title"><span class="panel__title-dot"></span>系統資源</h3><span class="panel__sub">即時</span></div>
+      <div class="gauges-grid">
+        ${[['CPU', 47], ['GPU', 73], ['記憶體', 28]].map(([lab, pct]) => {
+          const c = 2 * Math.PI * 30;
+          const off = c * (1 - pct / 100);
+          return `<div class="gauge"><svg class="gauge__svg" viewBox="0 0 70 70"><circle class="gauge__bg" cx="35" cy="35" r="30"/><circle class="gauge__fg" cx="35" cy="35" r="30" stroke-dasharray="${c}" stroke-dashoffset="${off}"/></svg><div class="gauge__lab">${pct}%<span class="gauge__sub">${lab}</span></div></div>`;
+        }).join('')}
+      </div>
+      <div style="font-family:var(--font-mono);font-size:11.5px;color:var(--text-tertiary);text-align:center;margin-top:8px">load avg: 0.${Math.floor(Math.random()*99)} 0.${Math.floor(Math.random()*99)} 0.${Math.floor(Math.random()*99)}</div>
+    `;
+    last.appendChild(panel);
+  }
+
+  // ============================================================
+  // 互動：Kanban 拖拉
+  // ============================================================
+  function setupKanbanDrag() {
+    const cards = document.querySelectorAll('.kanban__card');
+    const lists = document.querySelectorAll('.kanban__list');
+    if (!cards.length || !lists.length) return;
+    cards.forEach((card) => {
+      card.draggable = true;
+      card.addEventListener('dragstart', (e) => {
+        card.classList.add('dragging');
+        e.dataTransfer.setData('text/plain', '');
+      });
+      card.addEventListener('dragend', () => card.classList.remove('dragging'));
+    });
+    lists.forEach((list) => {
+      list.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        list.classList.add('drag-over');
+      });
+      list.addEventListener('dragleave', () => list.classList.remove('drag-over'));
+      list.addEventListener('drop', (e) => {
+        e.preventDefault();
+        list.classList.remove('drag-over');
+        const dragging = document.querySelector('.kanban__card.dragging');
+        if (dragging) {
+          list.appendChild(dragging);
+          showToast('已移動');
+        }
+      });
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
   // ---- Sidebar：依分類渲染選單 ----
@@ -1049,24 +1439,6 @@
       if (!item) return;
       $rail.querySelectorAll('.app__rail-item--active').forEach((el) => el.classList.remove('app__rail-item--active'));
       item.classList.add('app__rail-item--active');
-    });
-  }
-
-  // ---- Tabs：點擊切換 ----
-  function setupTabs() {
-    const $tabs = document.getElementById('appTabs');
-    if (!$tabs) return;
-    $tabs.addEventListener('click', (e) => {
-      const btn = e.target.closest('.app__tab');
-      if (!btn) return;
-      $tabs.querySelectorAll('.app__tab--active').forEach((el) => el.classList.remove('app__tab--active'));
-      btn.classList.add('app__tab--active');
-      // 視覺反饋：主內容輕微閃一下
-      const $main = document.getElementById('appMain');
-      if ($main) {
-        $main.style.opacity = '0.4';
-        setTimeout(() => ($main.style.opacity = '1'), 200);
-      }
     });
   }
 
