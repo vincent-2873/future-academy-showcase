@@ -33,7 +33,7 @@ const WORKS = [
     awards: ['未來學院 2025 年度 TOP 3', 'AppWorks AI 200 入選'],
     awards_en: ['Future Academy 2025 TOP 3', 'AppWorks AI 200 Selection'],
     student: { name: '林佳穎', cohort: '第 3 期', role: 'Full-stack' },
-    demo: { url: 'https://demo01.future-academy.tw', account: 'guest01@future-academy.tw', password: 'Demo2025!' },
+    demo: { url: '/demo/?id=01', account: 'guest01@future-academy.tw', password: 'Demo2025!' },
     status: 'LIVE', featured: true,
   },
   {
@@ -55,7 +55,7 @@ const WORKS = [
     awards: ['數位金點獎入圍', '未來學院年度作品 TOP 5'],
     awards_en: ['Golden Pin Design Award Finalist', 'Future Academy Annual TOP 5'],
     student: { name: '黃柏勳', cohort: '第 2 期', role: 'Full-stack + IoT' },
-    demo: { url: 'https://demo02.future-academy.tw', account: 'guest02@future-academy.tw', password: 'Demo2025!' },
+    demo: { url: '/demo/?id=02', account: 'guest02@future-academy.tw', password: 'Demo2025!' },
     status: 'LIVE', featured: true,
   },
   {
@@ -77,7 +77,7 @@ const WORKS = [
     awards: ['台北數位內容大賽銀獎', 'Product Hunt #4 Daily'],
     awards_en: ['Taipei Digital Content Awards Silver', 'Product Hunt #4 Daily'],
     student: { name: '陳語安', cohort: '第 4 期', role: '產品 + AI 工程' },
-    demo: { url: 'https://demo03.future-academy.tw', account: 'guest03@future-academy.tw', password: 'Demo2025!' },
+    demo: { url: '/demo/?id=03', account: 'guest03@future-academy.tw', password: 'Demo2025!' },
     status: 'LIVE', featured: true,
   },
   {
@@ -99,7 +99,7 @@ const WORKS = [
     awards: ['台北數位轉型獎', '中小企業創新應用入選'],
     awards_en: ['Taipei Digital Transformation Award', 'SME Innovation Application'],
     student: { name: '吳子瑜', cohort: '第 3 期', role: 'Mobile + Backend' },
-    demo: { url: 'https://demo04.future-academy.tw', account: 'guest04@future-academy.tw', password: 'Demo2025!' },
+    demo: { url: '/demo/?id=04', account: 'guest04@future-academy.tw', password: 'Demo2025!' },
     status: 'LIVE', featured: false,
   },
   {
@@ -121,7 +121,7 @@ const WORKS = [
     awards: ['Asia AI Awards 入圍', '台灣 SaaS 100 強'],
     awards_en: ['Asia AI Awards Finalist', 'Taiwan SaaS Top 100'],
     student: { name: '張承恩', cohort: '第 4 期', role: 'AI Engineer' },
-    demo: { url: 'https://demo05.future-academy.tw', account: 'guest05@future-academy.tw', password: 'Demo2025!' },
+    demo: { url: '/demo/?id=05', account: 'guest05@future-academy.tw', password: 'Demo2025!' },
     status: 'LIVE', featured: false,
   },
   {
@@ -143,7 +143,7 @@ const WORKS = [
     awards: ['Marketing Tech 100 入選'],
     awards_en: ['Marketing Tech 100'],
     student: { name: '李敏萱', cohort: '第 2 期', role: 'Automation + AI' },
-    demo: { url: 'https://demo06.future-academy.tw', account: 'guest06@future-academy.tw', password: 'Demo2025!' },
+    demo: { url: '/demo/?id=06', account: 'guest06@future-academy.tw', password: 'Demo2025!' },
     status: 'LIVE', featured: false,
   },
   {
@@ -165,7 +165,7 @@ const WORKS = [
     awards: ['MIT TR35 Asia 提名', 'GitHub Trending 第 7 名（一週）'],
     awards_en: ['MIT TR35 Asia Nominee', 'GitHub Trending #7 (1 week)'],
     student: { name: '周哲瑋', cohort: '第 4 期', role: 'AI Research' },
-    demo: { url: 'https://demo07.future-academy.tw', account: 'guest07@future-academy.tw', password: 'Demo2025!' },
+    demo: { url: '/demo/?id=07', account: 'guest07@future-academy.tw', password: 'Demo2025!' },
     status: 'LIVE', featured: true,
   },
   {
@@ -187,7 +187,7 @@ const WORKS = [
     awards: ['Webby Awards 入圍', 'No-code 創業家最愛工具 #2'],
     awards_en: ['Webby Awards Finalist', 'No-code Founders\' Favorite #2'],
     student: { name: '蔡雅筑', cohort: '第 3 期', role: 'Frontend + Design' },
-    demo: { url: 'https://demo08.future-academy.tw', account: 'guest08@future-academy.tw', password: 'Demo2025!' },
+    demo: { url: '/demo/?id=08', account: 'guest08@future-academy.tw', password: 'Demo2025!' },
     status: 'LIVE', featured: true,
   },
   {
@@ -209,7 +209,7 @@ const WORKS = [
     awards: ['UX Tools Awards 提名'],
     awards_en: ['UX Tools Awards Nominee'],
     student: { name: '鄭宇辰', cohort: '第 2 期', role: 'Full-stack + Stats' },
-    demo: { url: 'https://demo09.future-academy.tw', account: 'guest09@future-academy.tw', password: 'Demo2025!' },
+    demo: { url: '/demo/?id=09', account: 'guest09@future-academy.tw', password: 'Demo2025!' },
     status: 'LIVE', featured: false,
   },
   {
@@ -231,7 +231,7 @@ const WORKS = [
     awards: ['FinTech Taipei 入選', '蘋果年度推薦財務 App'],
     awards_en: ['FinTech Taipei Selected', 'Apple Editor\'s Choice (Finance)'],
     student: { name: '蘇詩涵', cohort: '第 3 期', role: 'Mobile + AI' },
-    demo: { url: 'https://demo10.future-academy.tw', account: 'guest10@future-academy.tw', password: 'Demo2025!' },
+    demo: { url: '/demo/?id=10', account: 'guest10@future-academy.tw', password: 'Demo2025!' },
     status: 'LIVE', featured: true,
   },
   {
@@ -253,7 +253,7 @@ const WORKS = [
     awards: ['Apple Design Awards 提名', '健康促進獎入選'],
     awards_en: ['Apple Design Awards Nominee', 'Health Promotion Award Finalist'],
     student: { name: '王宥婷', cohort: '第 4 期', role: 'AI + Mobile' },
-    demo: { url: 'https://demo11.future-academy.tw', account: 'guest11@future-academy.tw', password: 'Demo2025!' },
+    demo: { url: '/demo/?id=11', account: 'guest11@future-academy.tw', password: 'Demo2025!' },
     status: 'LIVE', featured: false,
   },
   {
@@ -275,7 +275,7 @@ const WORKS = [
     awards: ['數位閱讀獎入圍', '誠品書店推薦工具'],
     awards_en: ['Digital Reading Award Finalist', 'Eslite Recommended Tool'],
     student: { name: '林冠廷', cohort: '第 3 期', role: 'AI + Frontend' },
-    demo: { url: 'https://demo12.future-academy.tw', account: 'guest12@future-academy.tw', password: 'Demo2025!' },
+    demo: { url: '/demo/?id=12', account: 'guest12@future-academy.tw', password: 'Demo2025!' },
     status: 'LIVE', featured: false,
   },
   {
@@ -297,7 +297,7 @@ const WORKS = [
     awards: ['東京旅展創新獎', '台灣旅行業科技應用獎'],
     awards_en: ['Tokyo Tourism Expo Innovation Award', 'Taiwan Travel Industry Tech Award'],
     student: { name: '曾品瑜', cohort: '第 4 期', role: 'AI + Travel Tech' },
-    demo: { url: 'https://demo13.future-academy.tw', account: 'guest13@future-academy.tw', password: 'Demo2025!' },
+    demo: { url: '/demo/?id=13', account: 'guest13@future-academy.tw', password: 'Demo2025!' },
     status: 'LIVE', featured: true,
   },
   {
@@ -319,7 +319,7 @@ const WORKS = [
     awards: ['HR Tech Awards 入選', '104 人力銀行年度創新'],
     awards_en: ['HR Tech Awards Selected', '104 Job Bank Annual Innovation'],
     student: { name: '何彥廷', cohort: '第 2 期', role: 'AI + HR Tech' },
-    demo: { url: 'https://demo14.future-academy.tw', account: 'guest14@future-academy.tw', password: 'Demo2025!' },
+    demo: { url: '/demo/?id=14', account: 'guest14@future-academy.tw', password: 'Demo2025!' },
     status: 'LIVE', featured: false,
   },
   {
@@ -341,7 +341,7 @@ const WORKS = [
     awards: ['Behance 月度精選', '日本 Good Design Award 入圍'],
     awards_en: ['Behance Monthly Featured', 'Japan Good Design Award Finalist'],
     student: { name: '許芷瑄', cohort: '第 3 期', role: 'Design + WebGL' },
-    demo: { url: 'https://demo15.future-academy.tw', account: 'guest15@future-academy.tw', password: 'Demo2025!' },
+    demo: { url: '/demo/?id=15', account: 'guest15@future-academy.tw', password: 'Demo2025!' },
     status: 'LIVE', featured: false,
   },
   {
@@ -363,7 +363,7 @@ const WORKS = [
     awards: ['Podcast Awards 創新獎', 'TechCrunch Asia 報導'],
     awards_en: ['Podcast Awards Innovation', 'TechCrunch Asia Featured'],
     student: { name: '楊孟翰', cohort: '第 4 期', role: 'Audio AI' },
-    demo: { url: 'https://demo16.future-academy.tw', account: 'guest16@future-academy.tw', password: 'Demo2025!' },
+    demo: { url: '/demo/?id=16', account: 'guest16@future-academy.tw', password: 'Demo2025!' },
     status: 'LIVE', featured: false,
   },
   {
@@ -385,7 +385,7 @@ const WORKS = [
     awards: ['全國大專院校創新賽冠軍', '永續設計獎入選'],
     awards_en: ['National College Innovation Award Champion', 'Sustainable Design Award Finalist'],
     student: { name: '沈思綺', cohort: '第 3 期', role: 'Full-stack + Web3' },
-    demo: { url: 'https://demo17.future-academy.tw', account: 'guest17@future-academy.tw', password: 'Demo2025!' },
+    demo: { url: '/demo/?id=17', account: 'guest17@future-academy.tw', password: 'Demo2025!' },
     status: 'LIVE', featured: false,
   },
   {
@@ -407,7 +407,7 @@ const WORKS = [
     awards: ['動保科技獎', '寵物產業創新獎入選'],
     awards_en: ['Animal Protection Tech Award', 'Pet Industry Innovation Finalist'],
     student: { name: '賴俊宏', cohort: '第 2 期', role: 'AI + Mobile' },
-    demo: { url: 'https://demo18.future-academy.tw', account: 'guest18@future-academy.tw', password: 'Demo2025!' },
+    demo: { url: '/demo/?id=18', account: 'guest18@future-academy.tw', password: 'Demo2025!' },
     status: 'LIVE', featured: false,
   },
   {
@@ -429,7 +429,7 @@ const WORKS = [
     awards: ['Chrome Web Store 年度精選', '教育科技獎入選'],
     awards_en: ['Chrome Web Store Annual Featured', 'EdTech Award Finalist'],
     student: { name: '邱乃瑩', cohort: '第 4 期', role: 'Extension + AI' },
-    demo: { url: 'https://demo19.future-academy.tw', account: 'guest19@future-academy.tw', password: 'Demo2025!' },
+    demo: { url: '/demo/?id=19', account: 'guest19@future-academy.tw', password: 'Demo2025!' },
     status: 'LIVE', featured: false,
   },
   {
@@ -451,7 +451,7 @@ const WORKS = [
     awards: ['Hacker News 首頁 #2', 'GitHub Trending 第一名（一週）'],
     awards_en: ['Hacker News Front Page #2', 'GitHub Trending #1 (1 week)'],
     student: { name: '高翊翔', cohort: '第 2 期', role: 'Full-stack + AI' },
-    demo: { url: 'https://demo20.future-academy.tw', account: 'guest20@future-academy.tw', password: 'Demo2025!' },
+    demo: { url: '/demo/?id=20', account: 'guest20@future-academy.tw', password: 'Demo2025!' },
     status: 'LIVE', featured: false,
   },
 ];

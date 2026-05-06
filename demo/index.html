@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>未來學院作品 Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="demo.css" />
+</head>
+<body>
+  <div class="page" id="page" hidden>
+    <!-- ========== 登入畫面 ========== -->
+    <div class="login" id="login">
+      <a href="../" class="login__back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        返回未來學院作品集
+      </a>
+
+      <div class="login__hero">
+        <span class="login__icon" id="loginIcon">🛍️</span>
+        <p class="login__cat" id="loginCat">電商</p>
+        <h1 class="login__title" id="loginTitle">NeuroShop 神經電商</h1>
+        <p class="login__sub" id="loginSub">AI-Native Commerce</p>
+        <p class="login__desc" id="loginDesc">會自己學習、自己進化的 AI-Native 電商平台</p>
+      </div>
+
+      <form class="login__form" id="loginForm">
+        <div class="login__field">
+          <label>帳號</label>
+          <input type="email" id="loginEmail" autocomplete="off" />
+        </div>
+        <div class="login__field">
+          <label>密碼</label>
+          <input type="password" id="loginPass" autocomplete="off" />
+        </div>
+        <button type="submit" class="login__btn">登入體驗 →</button>
+        <p class="login__hint">這是學員作品 demo，登入即可體驗（任何輸入皆可登入）</p>
+      </form>
+
+      <p class="login__note">未來學院 Future Academy · STUDENT WORK</p>
+    </div>
+
+    <!-- ========== 主介面 ========== -->
+    <div class="app" id="app" hidden>
+      <!-- 上方 navbar -->
+      <header class="app__nav">
+        <div class="app__brand">
+          <span class="app__icon" id="appIcon">🛍️</span>
+          <div>
+            <div class="app__name" id="appName">NeuroShop</div>
+            <div class="app__cat" id="appCat">電商</div>
+          </div>
+        </div>
+        <div class="app__user">
+          <span class="app__avatar" id="appAvatar">G</span>
+          <span class="app__hello">嗨，<b id="appUser">guest</b></span>
+          <a href="../" class="app__logout">登出</a>
+        </div>
+      </header>
+
+      <!-- 主內容（依 category 動態渲染） -->
+      <main class="app__main" id="appMain"></main>
+
+      <!-- 底部水印 -->
+      <footer class="app__foot">
+        <span class="app__foot-dot"></span>
+        這是未來學院第 <span id="appCohort">3</span> 期學員 <span id="appStudent">林佳穎</span> 的作品 ·
+        <a href="../">回到作品集</a>
+      </footer>
+    </div>
+  </div>
+
+  <script src="../data/works.js?v=10"></script>
+  <script src="demo.js?v=1"></script>
+</body>
+</html>
