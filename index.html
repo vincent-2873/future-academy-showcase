@@ -394,16 +394,19 @@
   <!-- ===== Toast ===== -->
   <div class="toast" id="toast" hidden>已複製</div>
 
-  <!-- Lenis 平滑滾動 -->
+  <!-- Lenis 平滑滾動已關閉：在 macOS 觸控板上會有黏滯感，原生滾動才順 -->
+  <!-- 若日後想開啟，把下面註解打開即可 -->
+  <!--
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
   <script>
     if (window.Lenis && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      const lenis = new window.Lenis({ duration: 1.2, smoothWheel: true, lerp: 0.1 });
+      const lenis = new window.Lenis({ duration: 0.6, smoothWheel: true, lerp: 0.18 });
       function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
       requestAnimationFrame(raf);
       window.__lenis = lenis;
     }
   </script>
+  -->
 
   <script src="data/works.js?v=11"></script>
   <script src="data/extras.js?v=10"></script>

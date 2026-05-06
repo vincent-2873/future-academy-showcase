@@ -1076,6 +1076,317 @@ input { font-family: inherit; }
   color: var(--text-primary);
 }
 
+/* ============================================================
+   LiveFX：讓所有 demo 看起來「正在運作中」
+   ============================================================ */
+
+/* === 浮動的「LIVE EVENTS」串流視窗 === */
+.live-stream {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 50;
+  width: 300px;
+  background: rgba(14, 16, 20, 0.92);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(107, 255, 142, 0.18);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 0, 0, 0.4);
+  font-family: var(--font-sans);
+  animation: streamIn 0.5s 0.6s backwards cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes streamIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.live-stream__head {
+  padding: 10px 14px;
+  background: rgba(107, 255, 142, 0.08);
+  border-bottom: 1px solid rgba(107, 255, 142, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.live-stream__head::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  margin-right: 6px;
+  animation: pulse 1.4s infinite;
+}
+.live-stream__head-meta {
+  font-family: 'Space Grotesk', monospace;
+  font-size: 10px;
+  color: var(--text-tertiary);
+  letter-spacing: 0;
+  font-weight: 500;
+}
+.live-stream__list {
+  max-height: 210px;
+  overflow: hidden;
+  position: relative;
+}
+.live-event {
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  animation: eventIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes eventIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.live-event__icon {
+  font-size: 14px;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+.live-event__main { flex: 1; min-width: 0; }
+.live-event__title { font-weight: 600; color: var(--text-primary); margin-bottom: 1px; font-size: 12px; line-height: 1.3; }
+.live-event__time { font-family: 'Space Grotesk', monospace; font-size: 10px; color: var(--text-tertiary); }
+.live-event--alert .live-event__title { color: #FBBF24; }
+.live-event--ok .live-event__title { color: var(--accent); }
+
+/* === 跳動的數字（基於 .kpi__val） === */
+.tick { display: inline-block; font-variant-numeric: tabular-nums; }
+.tick--flash { animation: tickFlash 0.4s; }
+@keyframes tickFlash {
+  0% { color: var(--accent); transform: scale(1.04); }
+  100% { color: var(--text-primary); transform: scale(1); }
+}
+
+/* === 雷達掃描（疊在 panel--hero 角落） === */
+.radar-pulse {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 60px;
+  height: 60px;
+  pointer-events: none;
+  z-index: 2;
+}
+.radar-pulse__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  opacity: 0;
+  animation: radarRing 2.4s linear infinite;
+}
+.radar-pulse__ring:nth-child(2) { animation-delay: 0.8s; }
+.radar-pulse__ring:nth-child(3) { animation-delay: 1.6s; }
+@keyframes radarRing {
+  0% { transform: scale(0.3); opacity: 0.6; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+.radar-pulse__sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 270deg, rgba(107, 255, 142, 0.28) 360deg);
+  animation: radarSweep 3s linear infinite;
+}
+@keyframes radarSweep {
+  to { transform: rotate(360deg); }
+}
+.radar-pulse__core {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 10px var(--accent);
+}
+
+/* === 假終端機 / 流動 log === */
+.terminal {
+  background: #04050a;
+  border: 1px solid var(--border-mid);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  font-family: 'Space Grotesk', 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: #6BFF8E;
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+}
+.terminal__head {
+  display: flex; align-items: center; gap: 6px;
+  margin: -4px -4px 8px;
+}
+.terminal__head span {
+  width: 9px; height: 9px; border-radius: 50%;
+}
+.terminal__head span:nth-child(1) { background: #FB7185; }
+.terminal__head span:nth-child(2) { background: #FBBF24; }
+.terminal__head span:nth-child(3) { background: #6BFF8E; }
+.terminal__lines {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.term-line {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  animation: termIn 0.3s ease;
+  opacity: 0;
+}
+.term-line[data-show] { opacity: 1; }
+@keyframes termIn {
+  from { transform: translateX(-8px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.term-line--info { color: #94A3B8; }
+.term-line--ok { color: #6BFF8E; }
+.term-line--warn { color: #FBBF24; }
+.term-line--err { color: #FB7185; }
+.term-line--accent { color: #5B8DEF; }
+
+/* === 發光脈動邊框（panel--hero 加 .breathing 即可） === */
+.breathing {
+  position: relative;
+  isolation: isolate;
+}
+.breathing::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  border: 1px solid rgba(107, 255, 142, 0.4);
+  opacity: 0;
+  animation: breathe 3s ease-in-out infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+@keyframes breathe {
+  0%, 100% { opacity: 0; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.005); }
+}
+
+/* === Sparkline 微型走勢圖 === */
+.sparkline {
+  display: inline-block;
+  width: 60px;
+  height: 22px;
+  vertical-align: middle;
+  margin-left: 8px;
+}
+.sparkline__line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 3px rgba(107,255,142,0.4));
+}
+
+/* === 環形進度（gauge） === */
+.gauge {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  margin: 0 auto;
+}
+.gauge__svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.gauge__bg { fill: none; stroke: var(--border-soft); stroke-width: 6; }
+.gauge__fg { fill: none; stroke: var(--accent); stroke-width: 6; stroke-linecap: round; filter: drop-shadow(0 0 6px var(--accent)); transition: stroke-dashoffset 1s var(--ease-out); }
+.gauge__lab {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Grotesk', monospace;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+.gauge__sub { font-size: 9.5px; color: var(--text-tertiary); font-weight: 500; letter-spacing: 0.04em; }
+
+/* === 心電圖 / 波形跳動 === */
+.heartbeat {
+  height: 60px;
+  position: relative;
+  background: linear-gradient(180deg, transparent, rgba(107,255,142,0.04));
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.heartbeat__line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--accent);
+  opacity: 0.3;
+}
+.heartbeat__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.heartbeat__path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 4px var(--accent));
+  stroke-dasharray: 800;
+  animation: ecgScroll 3s linear infinite;
+}
+@keyframes ecgScroll {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -800; }
+}
+
+/* === 訊息泡泡打字效果 === */
+.typing-dots {
+  display: inline-flex;
+  gap: 3px;
+  padding: 4px 0;
+}
+.typing-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.4;
+  animation: typing 1.2s infinite;
+}
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typing {
+  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-4px); }
+}
+
 /* 選取顏色 */
 ::selection { background: var(--accent); color: var(--accent-text); }
 

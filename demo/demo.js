@@ -54,6 +54,8 @@
     document.getElementById('app').hidden = false;
     renderDashboard();
     window.scrollTo({ top: 0, behavior: 'instant' });
+    // 登入後啟動 LiveFX：浮動事件流 + 跳動數字 + 終端機 log
+    setTimeout(startLiveFX, 200);
   });
 
   // === 6. 依 id → category → default 渲染 dashboard ===
@@ -933,6 +935,309 @@
   // 別名（已涵蓋的 category 自動 map）
   LAYOUTS['自動化'] = LAYOUTS['AI 應用'];
   // 「工具」「學習」「旅遊」「職涯」「設計」「內容創作」「生活」 → default
+
+  // ============================================================
+  // LiveFX：登入後啟動的「正在運作中」效果
+  // ============================================================
+  function startLiveFX() {
+    enhanceMainPanel();
+    injectLiveStream();
+    startCounters();
+    startTickers();
+    setupSparklines();
+    injectTerminal();
+  }
+
+  // ---- 0. 自動把所有主面板加上「呼吸發光 + 雷達掃描」 ----
+  function enhanceMainPanel() {
+    const heroPanels = document.querySelectorAll('.panel--hero');
+    heroPanels.forEach((p) => {
+      p.classList.add('breathing');
+      // 只有第一個 panel--hero 加雷達
+      if (p === heroPanels[0]) {
+        const radar = document.createElement('div');
+        radar.className = 'radar-pulse';
+        radar.innerHTML = `
+          <div class="radar-pulse__sweep"></div>
+          <div class="radar-pulse__ring"></div>
+          <div class="radar-pulse__ring"></div>
+          <div class="radar-pulse__ring"></div>
+          <div class="radar-pulse__core"></div>
+        `;
+        p.appendChild(radar);
+      }
+    });
+  }
+
+  // ---- 5. AI 應用、工具、自動化類別額外注入「即時系統日誌終端機」 ----
+  function injectTerminal() {
+    const techCategories = ['AI 應用', '自動化', '工具'];
+    if (!techCategories.includes(work.category)) return;
+    const $main = document.getElementById('appMain');
+    if (!$main) return;
+    // 找最後一個 panel 後面追加
+    const lastDashCol = $main.querySelector('.dash > .dash__col:last-child');
+    if (!lastDashCol) return;
+
+    const term = document.createElement('div');
+    term.className = 'panel';
+    term.innerHTML = `
+      <div class="panel__head">
+        <h3 class="panel__title"><span class="panel__title-dot"></span>系統日誌 · 即時</h3>
+        <span class="panel__sub">tail -f /var/log</span>
+      </div>
+      <div class="terminal">
+        <div class="terminal__head"><span></span><span></span><span></span></div>
+        <div class="terminal__lines" id="termLines"></div>
+      </div>
+    `;
+    lastDashCol.appendChild(term);
+
+    const $lines = term.querySelector('#termLines');
+    const tplsByCategory = {
+      'AI 應用': [
+        ['info', '[{t}] [agent.scheduler] dispatching task to research-agent'],
+        ['ok', '[{t}] [llm.invoke] claude-3.5-sonnet · 1247 tokens · 842ms'],
+        ['accent', '[{t}] [vector.search] knowledge-base · 8 results · cosine 0.87'],
+        ['info', '[{t}] [tool.exec] /web-search "AI agent best practices"'],
+        ['warn', '[{t}] [rate-limit] anthropic api · approaching 80% quota'],
+        ['ok', '[{t}] [agent.complete] task #A-{n} · 4 steps · $0.{p}'],
+        ['info', '[{t}] [memory.write] conversation #{n} · 3 entries'],
+      ],
+      '自動化': [
+        ['info', '[{t}] [n8n] workflow "Daily Posts" triggered'],
+        ['ok', '[{t}] [openai] gpt-4o · article-draft generated'],
+        ['accent', '[{t}] [dalle] illustration · 1024x1024 · 8s'],
+        ['info', '[{t}] [buffer] post scheduled · IG · 2h from now'],
+        ['ok', '[{t}] [seo.check] EEAT score: {p}/100'],
+        ['warn', '[{t}] [draft] queue length: {n} pending'],
+      ],
+      '工具': [
+        ['info', '[{t}] [http] POST /api/save · 200 · 47ms'],
+        ['ok', '[{t}] [user] #{n} completed onboarding step 3/5'],
+        ['accent', '[{t}] [export] doc-{n}.pdf · 2.4 MB · ready'],
+        ['info', '[{t}] [collab] cursor sync · 3 users'],
+        ['ok', '[{t}] [auto-save] doc-{n} · v.{p}'],
+      ],
+    };
+    const tpls = tplsByCategory[work.category] || tplsByCategory['工具'];
+
+    function pushLine() {
+      const [level, body] = tpls[Math.floor(Math.random() * tpls.length)];
+      const t = new Date().toLocaleTimeString('en-US', { hour12: false });
+      const n = Math.floor(Math.random() * 9000) + 1000;
+      const p = Math.floor(Math.random() * 90) + 10;
+      const text = body.replace('{t}', t).replace('{n}', n).replace('{p}', p);
+      const line = document.createElement('div');
+      line.className = `term-line term-line--${level}`;
+      line.textContent = text;
+      line.setAttribute('data-show', '');
+      $lines.prepend(line);
+      while ($lines.children.length > 9) $lines.removeChild($lines.lastChild);
+    }
+    for (let i = 0; i < 5; i++) pushLine();
+    setInterval(pushLine, 1400 + Math.random() * 1200);
+  }
+
+  // ---- 1. 浮動 LIVE EVENTS 串流視窗 ----
+  function injectLiveStream() {
+    const eventsByCategory = {
+      '電商': [
+        ['🛍️', '新訂單 #FA-{n} 完成結帳', 'NT$ {p}'],
+        ['📦', '商品 #{n} 即將售罄', '剩 {p} 件'],
+        ['🤖', 'AI 為 #{n} 生成新文案', '匹配度 {p}%'],
+        ['💳', '會員 #{n} 升級至金卡', '+ NT$ {p} 折扣'],
+        ['🔔', '購物車流失再行銷', '已寄出 {p} 封'],
+      ],
+      '餐飲': [
+        ['🍜', '新訂單 #{n} · T03', 'NT$ {p}'],
+        ['👤', '線上訂位 · {p} 位', '今晚 19:30'],
+        ['🔔', 'T0{p} 結帳完成', '翻桌中'],
+        ['📈', '當日營收突破', 'NT$ {n}'],
+        ['🍱', '本日熱銷 +1', '商業午餐'],
+      ],
+      '影音': [
+        ['🎬', '影片 #{n} 渲染完成', '時長 0:30'],
+        ['🎙️', 'AI 配音任務啟動', '音色：親切女聲'],
+        ['📤', '已發佈到 IG', '+ {p} 觀看'],
+        ['⚡', 'GPU 利用率', '{p}%'],
+        ['✨', '新模板上架', '極簡商業風'],
+      ],
+      '社群': [
+        ['🎉', '{p} 人加入「{n}」', '線下揪團'],
+        ['📍', '附近 1km 內', '新活動 {p} 場'],
+        ['⭐', '使用者評分', '{p} 分'],
+        ['🤝', '揪團成功媒合', '+ {p} 場'],
+      ],
+      'AI 應用': [
+        ['💬', '對話 #{n} 完成', '滿意度 {p}%'],
+        ['🤖', 'Agent 任務 +1', 'token: {n}'],
+        ['🧠', '推理步驟', '{p} steps'],
+        ['🔧', '工具呼叫', '/web-search'],
+        ['⚡', 'p95 延遲', '{p} ms'],
+      ],
+      '自動化': [
+        ['🤖', 'Agent 完成第 {n} 步', 'tokens: {p}'],
+        ['📤', '貼文已排程', 'IG / FB / X'],
+        ['📊', 'SEO 分數', '{p}/100'],
+        ['✨', '新草稿產出', 'EP.{n}'],
+      ],
+      '工具': [
+        ['⚙️', '使用者 #{n} 完成設定', '+1 active'],
+        ['🪄', 'AI 優化建議', '{p} 項'],
+        ['📦', '匯出資料', '{p} MB'],
+        ['🔔', '系統健康檢查', '通過'],
+      ],
+      '個人財務': [
+        ['💳', '新交易自動分類', 'NT$ {p}'],
+        ['📊', '本月儲蓄率', '{p}%'],
+        ['🔔', '異常消費偵測', '已通知'],
+        ['💡', 'AI 找回隱形支出', '+ NT$ {p}'],
+        ['🏦', '銀行帳戶同步完成', '4 個帳戶'],
+      ],
+      '健康': [
+        ['💪', '完成今日運動目標', '{p} 分鐘'],
+        ['📷', '食物拍照辨識', '{p} kcal'],
+        ['💤', '昨晚睡眠品質', '{p} 分'],
+        ['❤️', '心率異常偵測', '正常'],
+        ['🥤', '飲水提醒', '{p}/8 杯'],
+      ],
+      '學習': [
+        ['📖', '完成第 {n} 頁', '+ {p} 個生詞'],
+        ['🃏', '新金句卡片', '已分享'],
+        ['🔁', '間隔複習', '{p} 個單字到期'],
+        ['✨', 'AI 推薦下一本', '匹配度 {p}%'],
+      ],
+      '旅遊': [
+        ['✈️', '航班價格警示', 'NT$ {p}'],
+        ['📍', '景點即時人潮', '中等'],
+        ['🏨', '飯店降價提醒', '降 NT$ {p}'],
+        ['🌤️', '目的地天氣', '晴 {p}°C'],
+      ],
+      '職涯': [
+        ['👁️', '履歷被開啟', '+ {p} 次'],
+        ['🎯', '匹配新職缺', '{p} 個'],
+        ['🤖', 'AI 模擬面試完成', '{p} 分'],
+        ['💼', '推薦人請求', '已寄出'],
+      ],
+      '設計': [
+        ['🎨', '收集新靈感', '+ {p} 張'],
+        ['🪄', 'AI 配色提取', '{p} 種主色'],
+        ['🧩', '新 Mood Board', '已匯出'],
+        ['🌟', 'Behance 收錄', '+ {p} 推薦'],
+      ],
+      '內容創作': [
+        ['🎙️', '新音檔上傳', '{p} MB'],
+        ['📝', '逐字稿完成', '{p} 字'],
+        ['📌', '章節摘要產出', '{p} 段'],
+        ['📤', '一鍵發佈', 'Spotify + Apple'],
+      ],
+      '生活': [
+        ['🐾', '寵物餵食打卡', '今日 {p} 次'],
+        ['📷', '行為分析完成', '正常'],
+        ['🔔', '預防接種提醒', '剩 {p} 天'],
+        ['❤️', '健康分數', '{p}'],
+      ],
+    };
+    const list = eventsByCategory[work.category] || eventsByCategory['工具'];
+    const stream = document.createElement('aside');
+    stream.className = 'live-stream';
+    stream.setAttribute('data-lenis-prevent', '');
+    stream.innerHTML = `
+      <div class="live-stream__head">
+        <span>LIVE EVENTS</span>
+        <span class="live-stream__head-meta" id="streamCount">0 / min</span>
+      </div>
+      <div class="live-stream__list" id="streamList"></div>
+    `;
+    document.body.appendChild(stream);
+
+    const $list = stream.querySelector('#streamList');
+    const $count = stream.querySelector('#streamCount');
+    let counter = 0;
+
+    function pushEvent() {
+      const tpl = list[Math.floor(Math.random() * list.length)];
+      const n = (Math.floor(Math.random() * 9000) + 1000).toLocaleString();
+      const p = Math.floor(Math.random() * 90) + 10;
+      const title = tpl[1].replace('{n}', n).replace('{p}', p);
+      const meta = tpl[2] ? tpl[2].replace('{n}', n).replace('{p}', p) : '';
+      const ev = document.createElement('div');
+      ev.className = 'live-event';
+      ev.innerHTML = `
+        <span class="live-event__icon">${tpl[0]}</span>
+        <div class="live-event__main">
+          <div class="live-event__title">${title}</div>
+          <div class="live-event__time">${meta}${meta ? ' · ' : ''}剛剛</div>
+        </div>
+      `;
+      $list.prepend(ev);
+      counter++;
+      $count.textContent = counter + ' / min';
+      // 移除超過 4 條的
+      while ($list.children.length > 4) $list.removeChild($list.lastChild);
+    }
+    pushEvent();
+    pushEvent();
+    setInterval(pushEvent, 2400 + Math.random() * 1800);
+    // 每 60 秒重置計數
+    setInterval(() => counter = 0, 60000);
+  }
+
+  // ---- 2. KPI 數字進場時從 0 滾到目標 ----
+  function startCounters() {
+    document.querySelectorAll('.kpi__val').forEach((el) => {
+      const text = el.textContent;
+      const m = text.match(/^(.*?)([\d,\.]+)([^\d]*)$/);
+      if (!m) return;
+      const prefix = m[1];
+      const target = parseFloat(m[2].replace(/,/g, ''));
+      const suffix = m[3];
+      if (isNaN(target) || target === 0) return;
+      const start = performance.now();
+      const dur = 1200;
+      function frame(now) {
+        const t = Math.min((now - start) / dur, 1);
+        const eased = 1 - Math.pow(1 - t, 3);
+        const v = target * eased;
+        const formatted = target % 1 === 0 ? Math.floor(v).toLocaleString() : v.toFixed(1);
+        el.innerHTML = `${prefix}<span class="tick">${formatted}</span>${suffix}`;
+        if (t < 1) requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+
+  // ---- 3. 隨機讓某些 KPI 數字自己 tick up（每 2 秒） ----
+  function startTickers() {
+    // 自動找出所有「整數型」KPI 標記為可滾動目標
+    const kpiVals = document.querySelectorAll('.kpi__val .tick');
+    const candidates = Array.from(kpiVals).filter((el) => {
+      const txt = el.textContent.replace(/,/g, '');
+      return /^\d+$/.test(txt) && parseInt(txt) >= 100; // 只挑 3 位數以上的
+    });
+    if (!candidates.length) return;
+    setInterval(() => {
+      const el = candidates[Math.floor(Math.random() * candidates.length)];
+      const cur = parseInt(el.textContent.replace(/,/g, ''), 10);
+      const inc = Math.floor(Math.random() * 5) + 1;
+      el.textContent = (cur + inc).toLocaleString();
+      el.classList.remove('tick--flash');
+      void el.offsetWidth; // restart animation
+      el.classList.add('tick--flash');
+    }, 2200);
+  }
+
+  // ---- 4. 自動把 Sparkline 容器填上隨機走勢圖 ----
+  function setupSparklines() {
+    document.querySelectorAll('[data-sparkline]').forEach((el) => {
+      const n = 12;
+      const data = Array.from({length: n}, () => Math.random() * 100);
+      const max = Math.max(...data);
+      const pts = data.map((v, i) => `${(i / (n - 1)) * 60},${22 - (v / max) * 18}`);
+      el.innerHTML = `<svg class="sparkline" viewBox="0 0 60 22"><path class="sparkline__line" d="M ${pts.join(' L ')}"/></svg>`;
+    });
+  }
 
   // 共用：產生折線圖 SVG
   function chartLine(data) {
