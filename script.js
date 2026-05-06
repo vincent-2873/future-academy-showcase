@@ -288,6 +288,77 @@
     `;
   }
 
+  // ============================================================
+  // Modal 內：依分類產生「操作流程動畫」
+  // 每個流程 4 個節點循環高亮，搭配資料流動光點
+  // ============================================================
+  function operationFlow(w) {
+    const isEn = state.lang === 'en';
+    const FLOWS = {
+      '電商': isEn
+        ? [['🛍️', 'Browse'], ['🤖', 'AI Match'], ['💬', 'AI Copy'], ['💳', 'Checkout']]
+        : [['🛍️', '瀏覽商品'], ['🤖', 'AI 配對'], ['💬', 'AI 生成文案'], ['💳', '結帳']],
+      '餐飲': isEn
+        ? [['📱', 'QR Scan'], ['🍜', 'Order'], ['👨‍🍳', 'Kitchen'], ['📊', 'Analytics']]
+        : [['📱', 'QR 掃碼'], ['🍜', '點餐'], ['👨‍🍳', '廚房製作'], ['📊', '銷售分析']],
+      '影音': isEn
+        ? [['📝', 'Text Input'], ['🎙️', 'AI Voice'], ['🎬', 'Render'], ['📺', 'Publish']]
+        : [['📝', '文字腳本'], ['🎙️', 'AI 配音'], ['🎬', '渲染影片'], ['📺', '一鍵發佈']],
+      '社群': isEn
+        ? [['📍', 'Discover'], ['👥', 'Match'], ['🎉', 'Meet-up'], ['⭐', 'Rate']]
+        : [['📍', '發現附近'], ['👥', '揪團媒合'], ['🎉', '線下參加'], ['⭐', '評分回饋']],
+      'AI 應用': isEn
+        ? [['💬', 'Question'], ['🧠', 'Reasoning'], ['🔧', 'Tool Use'], ['✨', 'Answer']]
+        : [['💬', '使用者提問'], ['🧠', 'AI 推理'], ['🔧', '呼叫工具'], ['✨', '生成回答']],
+      '自動化': isEn
+        ? [['🎯', 'Trigger'], ['🤖', 'Agent'], ['📦', 'Process'], ['📤', 'Deliver']]
+        : [['🎯', '主題輸入'], ['🤖', 'Agent 工作'], ['📦', '產出內容'], ['📤', '排程發佈']],
+      '工具': isEn
+        ? [['📥', 'Input'], ['⚙️', 'Process'], ['🪄', 'AI Polish'], ['📤', 'Output']]
+        : [['📥', '資料輸入'], ['⚙️', '系統處理'], ['🪄', 'AI 優化'], ['📤', '匯出結果']],
+      '個人財務': isEn
+        ? [['🏦', 'Sync Banks'], ['🤖', 'Auto-Tag'], ['📊', 'Analyze'], ['💡', 'Advice']]
+        : [['🏦', '同步銀行'], ['🤖', 'AI 分類'], ['📊', '財務分析'], ['💡', 'AI 建議']],
+      '健康': isEn
+        ? [['📷', 'Photo'], ['🧬', 'AI Detect'], ['💪', 'Track'], ['🎯', 'Goal']]
+        : [['📷', '拍照記錄'], ['🧬', 'AI 偵測'], ['💪', '追蹤進度'], ['🎯', '達標']],
+      '學習': isEn
+        ? [['📖', 'Read'], ['💡', 'Extract'], ['🃏', 'Card'], ['🔁', 'Review']]
+        : [['📖', '閱讀內容'], ['💡', 'AI 萃取'], ['🃏', '生成卡片'], ['🔁', '間隔複習']],
+      '旅遊': isEn
+        ? [['🗣️', 'Tell AI'], ['🔍', 'Compare'], ['📅', 'Plan'], ['✈️', 'Travel']]
+        : [['🗣️', '告訴 AI'], ['🔍', '500 平台比價'], ['📅', '規劃行程'], ['✈️', '出發']],
+      '職涯': isEn
+        ? [['📝', 'Resume'], ['🎯', 'Job Match'], ['🤖', 'Mock Interview'], ['🎉', 'Offer']]
+        : [['📝', '填資料'], ['🎯', '職缺匹配'], ['🤖', 'AI 模擬面試'], ['🎉', '錄取']],
+      '設計': isEn
+        ? [['📷', 'Collect'], ['🎨', 'AI Color'], ['🧩', 'Blend'], ['✨', 'System']]
+        : [['📷', '收集靈感'], ['🎨', 'AI 配色'], ['🧩', '融合 DNA'], ['✨', '產出系統']],
+      '內容創作': isEn
+        ? [['🎤', 'Audio'], ['📝', 'Transcribe'], ['📌', 'Chapters'], ['📤', 'Publish']]
+        : [['🎤', '上傳音檔'], ['📝', '逐字稿'], ['📌', '章節摘要'], ['📤', '一鍵發佈']],
+      '生活': isEn
+        ? [['📷', 'Photo'], ['🤖', 'AI Detect'], ['📊', 'Record'], ['🔔', 'Alert']]
+        : [['📷', '拍照記錄'], ['🤖', 'AI 偵測'], ['📊', '健康紀錄'], ['🔔', '異常提醒']],
+    };
+    const flow = FLOWS[w.category] || FLOWS['工具'];
+    const flowLabel = isEn ? 'OPERATION FLOW' : '操作流程動畫';
+    return `
+      <div class="m__demo-anim">
+        <span class="m__demo-anim__label">${flowLabel}</span>
+        <div class="flow">
+          ${flow.map(([icon, label], i) => `
+            <div class="flow-node" data-state="${i + 1}">
+              <span class="flow-node__icon">${icon}</span>
+              <span>${escapeHtml(label)}</span>
+            </div>
+            ${i < flow.length - 1 ? '<div class="flow-arrow"><span class="pulse"></span></div>' : ''}
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
   function metricLabel(key) {
     const zhMap = {
       users: '使用者', mau: '月活躍', orders: '訂單', videos: '產出影片', chats: '對話',
@@ -484,6 +555,8 @@
         <h2 class="m__title">${escapeHtml(L(w, 'title'))}</h2>
         <p class="m__subtitle">${escapeHtml(w.subtitle)}</p>
         <p class="m__desc">${escapeHtml(L(w, 'description'))}</p>
+
+        ${operationFlow(w)}
 
         ${highlightsHtml}
         ${metricsHtml}
