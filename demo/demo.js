@@ -940,12 +940,151 @@
   // LiveFX：登入後啟動的「正在運作中」效果
   // ============================================================
   function startLiveFX() {
+    renderSidebar();
+    setupTabs();
+    setupRefreshButton();
     enhanceMainPanel();
     injectLiveStream();
     startCounters();
     startTickers();
     setupSparklines();
     injectTerminal();
+  }
+
+  // ---- Sidebar：依分類渲染選單 ----
+  function renderSidebar() {
+    const $rail = document.getElementById('appRail');
+    if (!$rail) return;
+    const RAIL_BY_CAT = {
+      '電商': [
+        ['MAIN', [['📊','儀表板','OK'],['📦','訂單','24'],['🛍️','商品','142']]],
+        ['CRM', [['👥','客戶','5.2K'],['💎','VIP 會員','318'],['📧','行銷活動','3']]],
+        ['SYSTEM', [['🔌','整合','7'],['📈','分析'],['⚙️','設定']]],
+      ],
+      '餐飲': [
+        ['營運', [['📊','即時看板','OK'],['🍱','訂單','24'],['🪑','桌況','8/12'],['📅','訂位','6']]],
+        ['菜單', [['📋','菜單管理','42'],['🥬','食材庫存'],['💰','成本分析']]],
+        ['SYSTEM', [['👨‍🍳','員工'],['⚙️','設定']]],
+      ],
+      '影音': [
+        ['工作', [['📊','儀表板','OK'],['🎬','影片庫','142'],['⏳','渲染隊列','3']]],
+        ['素材', [['🎨','模板','58'],['🎙️','音色','30+'],['🎵','音樂庫','2.4K']]],
+        ['SYSTEM', [['🔌','API'],['📈','分析'],['⚙️','設定']]],
+      ],
+      '社群': [
+        ['探索', [['🗺️','地圖','OK'],['🎉','活動','142'],['👥','揪團','24']]],
+        ['我的', [['💬','聊天','5'],['⭐','收藏','38'],['👤','個人檔']]],
+        ['SYSTEM', [['🔔','通知'],['⚙️','設定']]],
+      ],
+      'AI 應用': [
+        ['工作區', [['💬','對話','OK'],['🤖','Agents','4'],['📚','知識庫']]],
+        ['監控', [['📊','分析'],['💵','成本','$12'],['📈','效能']]],
+        ['SYSTEM', [['🔌','整合'],['🔐','API Keys'],['⚙️','設定']]],
+      ],
+      '自動化': [
+        ['工作流', [['📊','儀表板','OK'],['⚙️','流水線','12'],['📅','排程','24']]],
+        ['素材', [['📝','草稿','58'],['🖼️','圖庫','812'],['📤','發佈紀錄']]],
+        ['SYSTEM', [['🔌','整合','7'],['⚙️','設定']]],
+      ],
+      '個人財務': [
+        ['財務', [['📊','概況','OK'],['💳','交易','387'],['🏦','帳戶','4']]],
+        ['規劃', [['🎯','目標','3'],['📈','投資','7'],['💡','AI 建議','12']]],
+        ['SYSTEM', [['🔔','提醒'],['⚙️','設定']]],
+      ],
+      '健康': [
+        ['今日', [['💪','總覽','OK'],['🍱','飲食'],['🏃','運動'],['💤','睡眠']]],
+        ['趨勢', [['📈','體重'],['❤️','心率'],['🩺','報告']]],
+        ['SYSTEM', [['⚙️','設定']]],
+      ],
+      '學習': [
+        ['工作', [['📊','儀表板','OK'],['📖','書庫','42'],['🃏','金句卡','238']]],
+        ['進度', [['📈','閱讀統計'],['🎯','目標','3'],['🔁','複習','12']]],
+        ['SYSTEM', [['👥','讀書會'],['⚙️','設定']]],
+      ],
+      '旅遊': [
+        ['行程', [['🗺️','概覽','OK'],['📅','日程','7'],['🏨','住宿']]],
+        ['工具', [['💱','匯率'],['🌤️','天氣'],['📞','緊急聯絡']]],
+        ['SYSTEM', [['👥','旅伴'],['⚙️','設定']]],
+      ],
+      '職涯': [
+        ['履歷', [['📊','儀表板','OK'],['📄','版本','5'],['🎯','匹配','12']]],
+        ['面試', [['🤖','AI 模擬','7'],['💡','問題庫','240+'],['💼','錄取追蹤']]],
+        ['SYSTEM', [['🔗','LinkedIn'],['⚙️','設定']]],
+      ],
+      '設計': [
+        ['探索', [['🎨','靈感板','OK'],['🌟','精選','142'],['🔍','搜尋']]],
+        ['工具', [['🪄','配色'],['🔤','字型'],['📦','匯出']]],
+        ['SYSTEM', [['👥','團隊'],['⚙️','設定']]],
+      ],
+      '內容創作': [
+        ['工作', [['📊','儀表板','OK'],['🎙️','音檔','58'],['📝','逐字稿','24']]],
+        ['發佈', [['📅','排程'],['📊','觸及'],['💵','廣告']]],
+        ['SYSTEM', [['🔌','整合','3'],['⚙️','設定']]],
+      ],
+      '生活': [
+        ['毛孩', [['🐾','總覽','OK'],['📷','日記','142'],['📅','行事曆']]],
+        ['健康', [['💪','活動'],['🥩','餵食'],['💉','醫療']]],
+        ['SYSTEM', [['👥','社群'],['⚙️','設定']]],
+      ],
+      '工具': [
+        ['工作', [['📊','儀表板','OK'],['📁','專案','24'],['👥','成員','7']]],
+        ['資料', [['🗄️','資料庫'],['🔌','API'],['📈','使用量']]],
+        ['SYSTEM', [['🔐','安全'],['⚙️','設定']]],
+      ],
+    };
+    const sections = RAIL_BY_CAT[work.category] || RAIL_BY_CAT['工具'];
+    $rail.innerHTML = sections.map(([title, items]) => `
+      <p class="app__rail-section">${title}</p>
+      ${items.map(([icon, label, badge], i) => `
+        <div class="app__rail-item ${i === 0 && title === sections[0][0] ? 'app__rail-item--active' : ''}">
+          <span class="app__rail-item-icon">${icon}</span>
+          <span class="app__rail-item-label">${label}</span>
+          ${badge ? `<span class="app__rail-item-badge">${badge}</span>` : ''}
+        </div>
+      `).join('')}
+    `).join('');
+    // 點擊 sidebar 項目切換 active
+    $rail.addEventListener('click', (e) => {
+      const item = e.target.closest('.app__rail-item');
+      if (!item) return;
+      $rail.querySelectorAll('.app__rail-item--active').forEach((el) => el.classList.remove('app__rail-item--active'));
+      item.classList.add('app__rail-item--active');
+    });
+  }
+
+  // ---- Tabs：點擊切換 ----
+  function setupTabs() {
+    const $tabs = document.getElementById('appTabs');
+    if (!$tabs) return;
+    $tabs.addEventListener('click', (e) => {
+      const btn = e.target.closest('.app__tab');
+      if (!btn) return;
+      $tabs.querySelectorAll('.app__tab--active').forEach((el) => el.classList.remove('app__tab--active'));
+      btn.classList.add('app__tab--active');
+      // 視覺反饋：主內容輕微閃一下
+      const $main = document.getElementById('appMain');
+      if ($main) {
+        $main.style.opacity = '0.4';
+        setTimeout(() => ($main.style.opacity = '1'), 200);
+      }
+    });
+  }
+
+  // ---- 重新整理按鈕：旋轉 + 重新跑 counters ----
+  function setupRefreshButton() {
+    const $btn = document.getElementById('appRefresh');
+    if (!$btn) return;
+    $btn.addEventListener('click', () => {
+      $btn.classList.remove('spinning');
+      void $btn.offsetWidth;
+      $btn.classList.add('spinning');
+      // 隨機讓所有 .tick 數字閃一下
+      document.querySelectorAll('.kpi__val .tick').forEach((el) => {
+        el.classList.remove('tick--flash');
+        void el.offsetWidth;
+        el.classList.add('tick--flash');
+      });
+    });
   }
 
   // ---- 0. 自動把所有主面板加上「呼吸發光 + 雷達掃描」 ----

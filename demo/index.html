@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="demo.css?v=4" />
+  <link rel="stylesheet" href="demo.css?v=5" />
 </head>
 <body>
   <div class="page" id="page" hidden>
@@ -53,15 +53,65 @@
             <div class="app__cat" id="appCat">電商</div>
           </div>
         </div>
+        <div class="app__nav-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="搜尋訂單、商品、客戶…" id="appSearch" />
+          <kbd>⌘K</kbd>
+        </div>
         <div class="app__user">
+          <button class="app__icon-btn" aria-label="說明">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </button>
+          <button class="app__icon-btn app__bell" aria-label="通知">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+            <span class="app__bell-badge">3</span>
+          </button>
           <span class="app__avatar" id="appAvatar">G</span>
           <span class="app__hello">嗨，<b id="appUser">guest</b></span>
           <a href="../" class="app__logout">登出</a>
         </div>
       </header>
 
-      <!-- 主內容（依 category 動態渲染） -->
-      <main class="app__main" id="appMain"></main>
+      <div class="app__shell">
+        <!-- 左側側邊欄 -->
+        <aside class="app__rail" id="appRail"></aside>
+
+        <!-- 主內容區 -->
+        <div class="app__content">
+          <div class="app__tabs">
+            <div class="app__tab-group" id="appTabs">
+              <button class="app__tab app__tab--active" data-tab="overview">總覽</button>
+              <button class="app__tab" data-tab="detail">明細</button>
+              <button class="app__tab" data-tab="trend">趨勢分析</button>
+              <button class="app__tab" data-tab="settings">設定</button>
+            </div>
+            <div class="app__toolbar">
+              <button class="app__tool" title="篩選">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                篩選
+              </button>
+              <button class="app__tool" title="排序">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="9" y1="18" x2="15" y2="18"/></svg>
+                排序
+              </button>
+              <button class="app__tool" title="匯出 CSV">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                匯出
+              </button>
+              <button class="app__tool app__tool--refresh" title="重新整理" id="appRefresh">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <main class="app__main" id="appMain"></main>
+        </div>
+      </div>
+
+      <!-- 浮動 + 新增 FAB -->
+      <button class="app__fab" title="快速新增" aria-label="新增">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
 
       <!-- 底部水印 -->
       <footer class="app__foot">
@@ -73,6 +123,6 @@
   </div>
 
   <script src="../data/works.js?v=10"></script>
-  <script src="demo.js?v=3"></script>
+  <script src="demo.js?v=5"></script>
 </body>
 </html>
