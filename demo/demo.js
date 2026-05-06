@@ -56,10 +56,11 @@
     window.scrollTo({ top: 0, behavior: 'instant' });
   });
 
-  // === 6. 依 category 渲染 dashboard ===
+  // === 6. 依 id → category → default 渲染 dashboard ===
   function renderDashboard() {
     const $main = document.getElementById('appMain');
-    const layout = LAYOUTS[work.category] || LAYOUTS.default;
+    const idKey = LAYOUTS['__id'] && LAYOUTS['__id'][work.id];
+    const layout = (idKey && LAYOUTS[idKey]) || LAYOUTS[work.category] || LAYOUTS.default;
     $main.innerHTML = layout(work);
   }
 
@@ -418,6 +419,476 @@
         </div>
       </div>
     `,
+  };
+
+  // === 06 Forge Studio：Kanban 內容工作流 ===
+  LAYOUTS['__06'] = (w) => `
+    <div class="kanban">
+      ${[
+        ['草稿', 'rgba(251,191,36,0.15)', '#FBBF24', [
+          ['「2025 行銷趨勢」深度文章', '研究員 Agent · 蒐集中 · 12 篇參考'],
+          ['週四 IG 貼文 · 新品開箱', '寫手 Agent · 第 2 稿'],
+          ['Newsletter EP.42', '編輯 Agent · 校對中'],
+        ]],
+        ['審核中', 'rgba(192,110,255,0.15)', '#C06EFF', [
+          ['LinkedIn 長文 · CEO 觀點', '主管批次 · 等回覆'],
+          ['電子報 · 黑五專題', 'SEO 優化建議 3 項'],
+        ]],
+        ['已發佈', 'rgba(107,255,142,0.15)', '#6BFF8E', [
+          ['IG 短影片 · 新品速報', '昨天 14:32 · 觸及 12.4K'],
+          ['部落格 · 5 個 AI 工具評比', '前天 · 流量 +312%'],
+          ['Threads · 行銷小撇步', '前天 · 互動 1,840'],
+          ['FB 貼文 · 客戶見證', '3 天前 · 留言 86'],
+        ]],
+      ].map(([title, bg, color, items]) => `
+        <div class="kanban__col">
+          <div class="kanban__head" style="background:${bg};border-color:${color}40">
+            <span style="color:${color};font-weight:700">${title}</span>
+            <span style="color:${color};opacity:0.6;font-size:11px;font-family:var(--font-sans)">${items.length}</span>
+          </div>
+          <div class="kanban__list">
+            ${items.map(([t, m]) => `<div class="kanban__card"><div class="kanban__card-title">${t}</div><div class="kanban__card-meta">${m}</div></div>`).join('')}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="panel" style="margin-top:20px">
+      <div class="panel__head"><h3 class="panel__title">本月 Agent 工時 (token 消耗)</h3></div>
+      ${chartLine([2400, 3100, 2800, 4200, 3900, 5100, 4800])}
+    </div>
+  `;
+
+  // === 07 Ensemble：Agent 網路圖 ===
+  LAYOUTS['__07'] = (w) => `
+    <div class="panel panel--hero" style="position:relative">
+      <div class="panel__head"><h3 class="panel__title"><span class="panel__title-dot"></span>多 Agent 協作中</h3><span class="panel__sub">任務 #A-2025-1142</span></div>
+      <p style="color:var(--text-secondary);margin:0 0 20px;font-size:14px">目標：撰寫一份「2025 AI 趨勢」深度報告</p>
+      <div class="agent-graph">
+        <svg viewBox="0 0 600 320" style="width:100%;height:320px">
+          <defs><filter id="glow"><feGaussianBlur stdDeviation="2"/></filter></defs>
+          ${/* lines */ ''}
+          <line x1="300" y1="160" x2="100" y2="80" stroke="var(--accent)" stroke-width="1.5" opacity="0.4" stroke-dasharray="4 4"><animate attributeName="stroke-dashoffset" from="0" to="-16" dur="1s" repeatCount="indefinite"/></line>
+          <line x1="300" y1="160" x2="500" y2="80" stroke="var(--accent)" stroke-width="1.5" opacity="0.4" stroke-dasharray="4 4"><animate attributeName="stroke-dashoffset" from="0" to="-16" dur="1s" repeatCount="indefinite"/></line>
+          <line x1="300" y1="160" x2="100" y2="240" stroke="var(--accent)" stroke-width="1.5" opacity="0.4" stroke-dasharray="4 4"><animate attributeName="stroke-dashoffset" from="0" to="-16" dur="1s" repeatCount="indefinite"/></line>
+          <line x1="300" y1="160" x2="500" y2="240" stroke="var(--accent)" stroke-width="1.5" opacity="0.4" stroke-dasharray="4 4"><animate attributeName="stroke-dashoffset" from="0" to="-16" dur="1s" repeatCount="indefinite"/></line>
+          ${/* center decider node */ ''}
+          <circle cx="300" cy="160" r="36" fill="rgba(107,255,142,0.15)" stroke="var(--accent)" stroke-width="2"/>
+          <circle cx="300" cy="160" r="36" fill="none" stroke="var(--accent)" stroke-width="2"><animate attributeName="r" from="36" to="56" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" from="0.6" to="0" dur="2s" repeatCount="indefinite"/></circle>
+          <text x="300" y="166" text-anchor="middle" fill="var(--accent)" font-size="18" font-weight="700" font-family="Space Grotesk">決策者</text>
+          ${/* satellites */ ''}
+          ${[
+            [100, 80, '研究員', '蒐集中', '#FBBF24'],
+            [500, 80, '寫手', '第 2 稿', '#5B8DEF'],
+            [100, 240, '批評家', '挑刺中', '#FB7185'],
+            [500, 240, '校對', '待命', '#94A3B8'],
+          ].map(([x, y, name, status, color]) => `
+            <circle cx="${x}" cy="${y}" r="26" fill="${color}22" stroke="${color}" stroke-width="2"/>
+            <text x="${x}" y="${y - 2}" text-anchor="middle" fill="${color}" font-size="12" font-weight="700">${name}</text>
+            <text x="${x}" y="${y + 14}" text-anchor="middle" fill="${color}" font-size="10" opacity="0.7" font-family="Space Grotesk">${status}</text>
+          `).join('')}
+        </svg>
+      </div>
+    </div>
+    <div class="dash" style="margin-top:20px">
+      <div class="dash__col">
+        <div class="panel"><h3 class="panel__title" style="margin-bottom:12px">推理思維樹</h3>
+          <div style="font-family:var(--font-mono);font-size:12.5px;line-height:1.9;color:var(--text-secondary)">
+            <div>├─ <span style="color:var(--accent)">[研究員]</span> 已蒐集 12 篇參考資料</div>
+            <div>│  ├─ MIT TR · 2025 AI 報告</div>
+            <div>│  ├─ Anthropic constitutional AI</div>
+            <div>│  └─ ... +10 more</div>
+            <div>├─ <span style="color:var(--accent)">[寫手]</span> 大綱完成 · 撰寫第 2 稿中</div>
+            <div>├─ <span style="color:#FB7185">[批評家]</span> 提出 3 個邏輯問題</div>
+            <div>└─ <span style="color:#94A3B8">[校對]</span> 待寫手完成</div>
+          </div>
+        </div>
+      </div>
+      <div class="dash__col">
+        <div class="panel"><h3 class="panel__title" style="margin-bottom:12px">本任務成本</h3>
+          <p style="font-family:'Space Grotesk';font-size:32px;font-weight:800;margin:0">$ 2.34</p>
+          <p style="font-size:12px;color:var(--text-tertiary);margin:6px 0 12px">52K tokens · 預算 $10</p>
+          <div class="bar"><div class="bar__fill" style="width:23%"></div></div>
+        </div>
+        <div class="panel"><h3 class="panel__title" style="margin-bottom:12px">使用模型</h3>
+          <div class="tags">
+            <span class="tag" style="border-color:rgba(192,110,255,0.3);color:#D4A5FF">Claude 3.5</span>
+            <span class="tag" style="border-color:rgba(192,110,255,0.3);color:#D4A5FF">GPT-4o</span>
+            <span class="tag" style="border-color:rgba(192,110,255,0.3);color:#D4A5FF">Perplexity</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // === 09 Pulse：問卷編輯器 + 即時統計 ===
+  LAYOUTS['__09'] = (w) => `
+    <div class="three-col">
+      <div class="panel" style="height:fit-content">
+        <h3 class="panel__title" style="margin-bottom:14px">題目列表</h3>
+        <div class="list">
+          ${['Q1 · 您的年齡', 'Q2 · 您最常用的 AI 工具', 'Q3 · 滿意度評分', 'Q4 · 開放題：建議'].map((q,i) => `<div class="row" style="padding:8px 10px"><span style="font-family:var(--font-mono);font-size:11px;color:var(--text-tertiary)">${String(i+1).padStart(2,'0')}</span><div class="row__main"><div class="row__title" style="font-size:12.5px">${q}</div></div></div>`).join('')}
+          <div class="row" style="padding:8px 10px;border:1px dashed var(--border-mid);background:transparent;color:var(--text-tertiary)"><div class="row__main"><div class="row__title" style="font-size:12.5px">＋ 新增題目</div></div></div>
+        </div>
+      </div>
+      <div class="panel">
+        <span class="panel__sub" style="margin-bottom:8px;display:block">第 2 題（單選）</span>
+        <h3 style="font-size:18px;margin:0 0 16px">您最常用的 AI 工具是？</h3>
+        ${['ChatGPT', 'Claude', 'Gemini', 'Perplexity', 'DeepSeek', '其他'].map((opt, i) => `<label class="opt"><span class="opt__box${i===1?' opt__box--checked':''}"></span><span>${opt}</span></label>`).join('')}
+        <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border-soft);font-size:12px;color:var(--text-tertiary);display:flex;justify-content:space-between"><span>邏輯：選 Claude → 跳第 4 題</span><span>已答 1,847 / 2,000</span></div>
+      </div>
+      <div class="panel">
+        <h3 class="panel__title" style="margin-bottom:14px">即時答題分布</h3>
+        ${[['ChatGPT', 42, '#6BFF8E'], ['Claude', 28, '#5B8DEF'], ['Gemini', 12, '#C06EFF'], ['Perplexity', 8, '#FBBF24'], ['DeepSeek', 6, '#FB7185'], ['其他', 4, '#94A3B8']].map(([n, p, c]) => `
+          <div style="margin-bottom:10px">
+            <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px"><span>${n}</span><span style="color:${c};font-weight:700;font-family:var(--font-mono)">${p}%</span></div>
+            <div class="bar"><div class="bar__fill" style="width:${p*2}%;background:${c}"></div></div>
+          </div>
+        `).join('')}
+        <p style="font-size:11px;color:var(--text-tertiary);margin:14px 0 0;font-family:var(--font-sans)">AI 已自動跑卡方檢定，差異具統計顯著性 (p &lt; 0.001)</p>
+      </div>
+    </div>
+  `;
+
+  // === 12 Codex：書籍牆 ===
+  LAYOUTS['__12'] = (w) => `
+    <div class="panel panel--hero" style="margin-bottom:20px">
+      <div class="panel__head"><h3 class="panel__title"><span class="panel__title-dot"></span>我的書牆</h3><span class="panel__sub">42 本 · 本年讀完 18 本</span></div>
+      <div class="book-wall">
+        ${[
+          ['人類大歷史', '尤瓦爾·哈拉瑞', '#8B5CF6'],
+          ['原子習慣', 'James Clear', '#F97316'],
+          ['深度工作力', 'Cal Newport', '#0EA5E9'],
+          ['底層邏輯', '劉潤', '#EF4444'],
+          ['思考的藝術', '魯爾夫', '#22C55E'],
+          ['黑天鵝效應', 'N. Taleb', '#6366F1'],
+          ['一人公司', 'Paul Jarvis', '#EC4899'],
+          ['複利效應', 'Darren Hardy', '#F59E0B'],
+          ['做你自己', '林志炫', '#06B6D4'],
+          ['投資最重要的事', 'Howard Marks', '#84CC16'],
+          ['第二座山', 'David Brooks', '#A855F7'],
+          ['鋼鐵人馬斯克', '艾西莫夫', '#10B981'],
+        ].map(([title, author, color], i) => `
+          <div class="book" style="--book-color:${color};animation-delay:${i*60}ms">
+            <div class="book__spine"></div>
+            <div class="book__cover">
+              <div class="book__title">${title}</div>
+              <div class="book__author">${author}</div>
+            </div>
+            <div class="book__progress"><div class="book__progress-fill" style="width:${[100, 100, 88, 100, 64, 100, 42, 100, 12, 100, 78, 100][i]}%"></div></div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    <div class="dash">
+      <div class="dash__col">
+        <div class="panel">
+          <h3 class="panel__title" style="margin-bottom:12px">📖 正在讀 · 一人公司</h3>
+          <div class="gen"><span class="gen__lab"><span class="gen__dot"></span>AI 萃取金句卡</span>「真正的成功不是規模，而是不需要擴張就能持續滿足你的人生。」</div>
+          <p style="color:var(--text-secondary);font-size:13px;line-height:1.7;margin:0">已讀 42% · 預計 8 天讀完 · 根據你的閱讀速度自動推薦下一本：《Range：通才致勝》</p>
+        </div>
+      </div>
+      <div class="dash__col">
+        <div class="panel"><h3 class="panel__title" style="margin-bottom:12px">本月閱讀</h3>
+          <div class="kpis" style="grid-template-columns:repeat(2,1fr)">
+            <div class="kpi"><p class="kpi__lab">時數</p><p class="kpi__val">14.6 hr</p><p class="kpi__delta kpi__delta--up">↑ 22%</p></div>
+            <div class="kpi"><p class="kpi__lab">完成</p><p class="kpi__val">3 本</p><p class="kpi__delta kpi__delta--up">↑ 1</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // === 13 Wanderlust：地圖式行程 ===
+  LAYOUTS['__13'] = (w) => `
+    <div class="panel panel--hero">
+      <div class="panel__head"><h3 class="panel__title"><span class="panel__title-dot"></span>東京 7 日行程</h3><span class="panel__sub">2025/12/20 出發 · 預算 NT$ 60K</span></div>
+      <div class="map">
+        <div class="map__bg"></div>
+        ${[
+          [12, 28, '成田機場', 'Day 1'],
+          [38, 22, '淺草', 'Day 1'],
+          [45, 38, '新宿', 'Day 2'],
+          [52, 30, '原宿', 'Day 3'],
+          [62, 48, '台場', 'Day 4'],
+          [78, 36, '築地', 'Day 5'],
+          [88, 58, '迪士尼', 'Day 6'],
+          [55, 70, '羽田機場', 'Day 7'],
+        ].map(([x, y, name, day], i) => `
+          <div class="map__pin" style="left:${x}%;top:${y}%;animation-delay:${i*150}ms">
+            <span class="map__pin-dot"></span>
+            <span class="map__pin-label"><b>${name}</b><br/>${day}</span>
+          </div>
+        `).join('')}
+        <svg class="map__line" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path d="M 12 28 L 38 22 L 45 38 L 52 30 L 62 48 L 78 36 L 88 58 L 55 70" fill="none" stroke="var(--accent)" stroke-width="0.4" stroke-dasharray="2 2" opacity="0.5"/>
+        </svg>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:20px">
+      <h3 class="panel__title" style="margin-bottom:14px">逐日行程</h3>
+      <div class="timeline">
+        ${[
+          ['Day 1', '成田 → 淺草雷門 → 隅田川夜景', '宿：淺草 APA'],
+          ['Day 2', '新宿御苑 → 歌舞伎町 → 機器人秀', '宿：新宿 Granbell'],
+          ['Day 3', '原宿竹下通 → 表參道 → 明治神宮', '宿：澀谷 Tokyu'],
+          ['Day 4', '台場海濱 → teamLab Borderless', '宿：台場日航'],
+          ['Day 5', '築地早市 → 銀座血拚 → 上野動物園', '宿：上野東急'],
+          ['Day 6', '東京迪士尼樂園一日', '宿：迪士尼 Mira Costa'],
+          ['Day 7', '皇居外苑 → 羽田機場', '回國'],
+        ].map(([day, route, hotel]) => `<div class="tl-row"><span class="tl-dot"></span><div class="tl-body"><div class="tl-day">${day}</div><div class="tl-route">${route}</div><div class="tl-hotel">${hotel}</div></div></div>`).join('')}
+      </div>
+    </div>
+  `;
+
+  // === 14 Resume Lab：履歷編輯器 + 即時預覽 ===
+  LAYOUTS['__14'] = (w) => `
+    <div class="resume-grid">
+      <div class="panel">
+        <h3 class="panel__title" style="margin-bottom:14px">編輯履歷</h3>
+        <div class="login__field"><label>姓名</label><input type="text" value="王小明" /></div>
+        <div class="login__field"><label>應徵職位</label><input type="text" value="Senior Frontend Engineer" /></div>
+        <div class="login__field"><label>關鍵成就（AI 已優化）</label><textarea style="width:100%;min-height:80px;padding:10px 12px;background:var(--bg-elev-2);border:1px solid var(--border-soft);border-radius:var(--radius-md);color:var(--text-primary);font-family:inherit;font-size:13px;resize:vertical">主導重構電商前端，將首屏載入時間從 4.2s 降至 1.1s，轉換率提升 23%</textarea></div>
+        <div class="notice" style="margin-top:14px"><span class="notice__icon">✨</span><span>AI 偵測到「<u>負責</u>」可改為「<u>主導</u>」更具行動力</span></div>
+        <button class="login__btn" style="margin-top:14px">套用優化建議</button>
+      </div>
+      <div class="resume-preview">
+        <div class="resume-preview__page">
+          <div style="text-align:center;padding-bottom:16px;border-bottom:2px solid #000">
+            <h2 style="font-size:24px;margin:0;color:#000">王小明</h2>
+            <p style="margin:4px 0 0;font-size:11px;color:#666">Senior Frontend Engineer · Taipei</p>
+            <p style="margin:2px 0 0;font-size:10px;color:#666">ming@example.com · linkedin/in/wangxm</p>
+          </div>
+          <h3 style="color:#000;font-size:13px;margin:14px 0 6px;letter-spacing:0.04em">EXPERIENCE</h3>
+          <div style="font-size:10px;color:#333;line-height:1.55">
+            <p style="margin:0;font-weight:700">Lead Frontend · Acme Corp</p>
+            <p style="margin:1px 0 4px;color:#666">2022 – Present</p>
+            <ul style="margin:0;padding-left:14px"><li>主導重構電商前端，首屏載入 4.2s → 1.1s，轉換率 +23%</li><li>建立 Design System 涵蓋 80+ 元件，跨 5 個產品線重用</li></ul>
+          </div>
+          <h3 style="color:#000;font-size:13px;margin:14px 0 6px;letter-spacing:0.04em">SKILLS</h3>
+          <div style="display:flex;flex-wrap:wrap;gap:4px">
+            ${['React', 'TypeScript', 'Next.js', 'Tailwind', 'GraphQL', 'Web Performance', 'A11y'].map(s => `<span style="font-size:10px;padding:2px 8px;border:1px solid #000;border-radius:4px;color:#000">${s}</span>`).join('')}
+          </div>
+        </div>
+        <div class="resume-preview__meta">
+          <span style="color:var(--accent)">●</span> 即時預覽 · ATS 評分 92/100 · 與職缺匹配 87%
+        </div>
+      </div>
+    </div>
+  `;
+
+  // === 15 Mood Atlas：Pinterest 瀑布流 ===
+  LAYOUTS['__15'] = (w) => `
+    <div class="panel" style="margin-bottom:20px">
+      <div class="panel__head"><h3 class="panel__title"><span class="panel__title-dot"></span>「賽博龐克咖啡廳」靈感板</h3><span class="panel__sub">本週新增 24 張</span></div>
+      <div class="masonry">
+        ${[
+          ['#0ea5e9', 200, '霓虹標誌'],
+          ['#6366f1', 280, '工業風格座位'],
+          ['#ec4899', 240, '粉紫漸層'],
+          ['#f59e0b', 220, '橘黃色光暈'],
+          ['#10b981', 300, '植物垂吊'],
+          ['#8b5cf6', 180, '深紫吧台'],
+          ['#ef4444', 260, '紅光吧檯'],
+          ['#14b8a6', 200, '青綠玻璃'],
+          ['#a855f7', 240, '紫色霧氣'],
+        ].map(([color, h, label], i) => `<div class="moodcard" style="--mood-color:${color};--mood-h:${h}px;animation-delay:${i*80}ms"><div class="moodcard__img"></div><div class="moodcard__lab">${label}</div></div>`).join('')}
+      </div>
+    </div>
+    <div class="dash">
+      <div class="dash__col">
+        <div class="panel"><h3 class="panel__title" style="margin-bottom:12px">AI 萃取的配色 DNA</h3>
+          <div style="display:flex;gap:8px;margin-bottom:14px">
+            ${['#0ea5e9', '#6366f1', '#ec4899', '#f59e0b', '#10b981'].map(c => `<div style="flex:1;height:60px;border-radius:8px;background:${c};box-shadow:0 4px 12px ${c}40"></div>`).join('')}
+          </div>
+          <p style="font-size:12.5px;color:var(--text-secondary);margin:0;line-height:1.6">主色：賽博藍 · 強調色：洋紅與霓虹綠 · 中性色：石墨灰</p>
+        </div>
+      </div>
+      <div class="dash__col">
+        <div class="panel"><h3 class="panel__title" style="margin-bottom:12px">字型搭配建議</h3>
+          <div style="font-family:'Space Grotesk';font-size:24px;font-weight:700;color:var(--text-primary);margin-bottom:4px">Display: Space Grotesk</div>
+          <div style="font-family:'Inter';font-size:14px;color:var(--text-secondary)">Body: Inter Regular</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // === 16 Voicebox：音訊波形編輯 ===
+  LAYOUTS['__16'] = (w) => `
+    <div class="panel panel--hero">
+      <div class="panel__head"><h3 class="panel__title"><span class="panel__title-dot"></span>這個職人很懂 EP.42</h3><span class="panel__sub">時長 47:32 · 已轉錄</span></div>
+      <div class="waveform">
+        ${Array.from({length: 80}, (_, i) => {
+          const h = 20 + Math.abs(Math.sin(i * 0.3) * 30) + Math.random() * 25;
+          const active = i < 28;
+          return `<span class="wave-bar" style="height:${h}%;background:${active ? 'var(--accent)' : 'var(--border-mid)'}"></span>`;
+        }).join('')}
+        <div class="wave-cursor"></div>
+      </div>
+      <div class="wave-meta"><span>00:14:32 / 00:47:32</span><span>講者：主持人 · 訪談來賓</span></div>
+    </div>
+    <div class="panel" style="margin-top:20px">
+      <h3 class="panel__title" style="margin-bottom:14px">章節時間軸（AI 自動分段）</h3>
+      <div class="timeline">
+        ${[
+          ['00:00', '開場 · 來賓自我介紹', '主持人'],
+          ['04:32', '創業初期的關鍵決策', '來賓'],
+          ['12:18', '第一次危機與轉折', '來賓 · 高情緒'],
+          ['22:47', '人才招募的哲學', '主持人 + 來賓'],
+          ['33:05', '對年輕創業者的建議', '來賓 · 高金句密度 ★'],
+          ['42:10', '結語與下集預告', '主持人'],
+        ].map(([t, c, s]) => `<div class="tl-row"><span class="tl-dot"></span><div class="tl-body"><div class="tl-day">${t}</div><div class="tl-route">${c}</div><div class="tl-hotel">${s}</div></div></div>`).join('')}
+      </div>
+    </div>
+  `;
+
+  // === 17 Athenaeum：二手書市集 ===
+  LAYOUTS['__17'] = (w) => `
+    <div class="panel" style="margin-bottom:20px">
+      <div class="panel__head"><h3 class="panel__title"><span class="panel__title-dot"></span>台大 · 資工系教科書</h3><span class="panel__sub">142 本可交換</span></div>
+      <div class="market">
+        ${[
+          ['📘', 'CLRS 演算法導論 4/e', '王同學 · 大三', '九成新', 'NT$ 380'],
+          ['📕', 'Operating Systems 9/e', '陳同學 · 大四', '七成新 · 有畫線', 'NT$ 220'],
+          ['📗', 'Computer Networks 7/e', '林學長 · 已畢業', '全新未拆', 'NT$ 580'],
+          ['📙', 'Database System Concepts', '李同學 · 大四', '八成新', 'NT$ 340'],
+          ['📘', '線性代數 Strang 6/e', '張同學 · 大二', '九成新', 'NT$ 420'],
+          ['📕', 'Discrete Math Rosen', '黃同學 · 大三', '六成新 · 多筆記', 'NT$ 180'],
+          ['📗', 'Compiler 龍書', '吳同學 · 大四', '七成新', 'NT$ 280'],
+          ['📙', 'AI: Modern Approach', '趙同學 · 研一', '九成新', 'NT$ 460'],
+        ].map(([icon, title, seller, condition, price]) => `
+          <div class="market-card">
+            <div class="market-card__icon">${icon}</div>
+            <div class="market-card__title">${title}</div>
+            <div class="market-card__seller">${seller}</div>
+            <div class="market-card__cond">${condition}</div>
+            <div class="market-card__price">${price}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  // === 18 PetMind：寵物個人檔 ===
+  LAYOUTS['__18'] = (w) => `
+    <div class="dash">
+      <div class="dash__col">
+        <div class="panel panel--hero" style="text-align:center;padding:32px">
+          <div class="pet-photo">🐕</div>
+          <h2 style="font-size:28px;margin:14px 0 4px;font-weight:800">麻吉</h2>
+          <p style="color:var(--text-tertiary);font-size:13px;margin:0 0 18px">柴犬 · 3 歲 · ♂ · 12.4 kg</p>
+          <div class="kpis">
+            <div class="kpi"><p class="kpi__lab">健康分數</p><p class="kpi__val" style="color:var(--accent)">92</p></div>
+            <div class="kpi"><p class="kpi__lab">活動量</p><p class="kpi__val">87%</p></div>
+            <div class="kpi"><p class="kpi__lab">情緒</p><p class="kpi__val">😊</p></div>
+            <div class="kpi"><p class="kpi__lab">心率</p><p class="kpi__val">88 bpm</p></div>
+          </div>
+        </div>
+        <div class="panel">
+          <h3 class="panel__title" style="margin-bottom:12px">AI 行為偵測</h3>
+          <div class="notice"><span class="notice__icon">✅</span><span>麻吉今日活動正常，焦慮指數比上週低 14%</span></div>
+          <div class="notice" style="background:rgba(251,191,36,0.06);border-color:rgba(251,191,36,0.2)"><span class="notice__icon">💧</span><span>飲水量略偏低，建議補充</span></div>
+        </div>
+      </div>
+      <div class="dash__col">
+        <div class="panel"><h3 class="panel__title" style="margin-bottom:12px">本週體重</h3>${chartLine([12.0, 12.1, 12.2, 12.3, 12.3, 12.4, 12.4])}</div>
+        <div class="panel">
+          <h3 class="panel__title" style="margin-bottom:12px">行事曆</h3>
+          <div class="list">
+            <div class="row"><span class="row__icon">💉</span><div class="row__main"><div class="row__title">狂犬病疫苗</div><div class="row__meta">12/05（21 天後）</div></div><span class="row__tag row__tag--warn">提醒</span></div>
+            <div class="row"><span class="row__icon">✂️</span><div class="row__main"><div class="row__title">美容預約</div><div class="row__meta">11/22 14:00</div></div><span class="row__tag">已預約</span></div>
+            <div class="row"><span class="row__icon">🏥</span><div class="row__main"><div class="row__title">年度健檢</div><div class="row__meta">明年 03/14</div></div><span class="row__tag">已排</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // === 19 LingoLink：雙語對照閱讀器 ===
+  LAYOUTS['__19'] = (w) => `
+    <div class="reader-grid">
+      <div class="panel">
+        <span class="panel__sub" style="display:block;margin-bottom:8px">English (CEFR B2)</span>
+        <p style="font-size:15px;line-height:1.85;color:var(--text-primary);margin:0">
+          The future of work isn't about <span class="lingo-word">automating</span> humans away. It's about <span class="lingo-word">augmenting</span> what we can do, freeing us from the <span class="lingo-word">tedious</span> so we can focus on what humans do best — creating, connecting, and caring.
+        </p>
+      </div>
+      <div class="panel">
+        <span class="panel__sub" style="display:block;margin-bottom:8px">繁體中文 · AI 翻譯</span>
+        <p style="font-size:15px;line-height:1.85;color:var(--text-primary);margin:0">
+          工作的未來不是要把人類自動化掉。而是要增強我們的能力，把我們從繁瑣中解放出來，讓我們專注於人類最擅長的事——創造、連結、關懷。
+        </p>
+      </div>
+      <div class="panel">
+        <h3 class="panel__title" style="margin-bottom:12px">📖 單字本（剛加入）</h3>
+        ${[
+          ['augmenting', 'v. 增強', '★★★ 關鍵字'],
+          ['tedious', 'adj. 繁瑣的', '★★ 進階字'],
+          ['automating', 'v. 自動化', '★ 已熟'],
+        ].map(([w, m, lvl]) => `<div class="row" style="padding:8px 10px"><div class="row__main"><div class="row__title" style="font-size:13.5px">${w}</div><div class="row__meta">${m}</div></div><span style="font-size:11px;color:var(--accent);font-family:var(--font-sans)">${lvl}</span></div>`).join('')}
+        <p style="margin:14px 0 0;font-size:11.5px;color:var(--text-tertiary);font-family:var(--font-sans)">下次複習：4 小時後（艾賓浩斯曲線）</p>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:20px">
+      <h3 class="panel__title" style="margin-bottom:12px">🤖 AI 文法解析 · 「freeing us from the tedious」</h3>
+      <p style="color:var(--text-secondary);font-size:14px;line-height:1.7;margin:0">這是分詞片語當伴隨狀況用法：<b style="color:var(--accent)">freeing</b> 修飾主動詞 <b style="color:var(--accent)">augmenting</b>，後面接 <b>from + 受詞</b> 表示「從...解放」。「the tedious」是定冠詞 + 形容詞 = 抽象名詞用法（= the tedious things）。</p>
+    </div>
+  `;
+
+  // === 20 Synapse：知識圖譜網路 ===
+  LAYOUTS['__20'] = (w) => `
+    <div class="panel panel--hero">
+      <div class="panel__head"><h3 class="panel__title"><span class="panel__title-dot"></span>你的思考演化網（過去 90 天）</h3><span class="panel__sub">847 個節點 · 2,341 條連線</span></div>
+      <div class="agent-graph">
+        <svg viewBox="0 0 600 320" style="width:100%;height:320px">
+          ${/* connections */ ''}
+          ${[
+            [120, 80, 240, 160], [240, 160, 360, 80], [240, 160, 360, 240], [240, 160, 480, 160],
+            [360, 80, 480, 60], [360, 240, 480, 280], [120, 240, 240, 160], [480, 160, 540, 100],
+          ].map(([x1,y1,x2,y2]) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--accent)" stroke-width="0.8" opacity="0.3"/>`).join('')}
+          ${/* nodes (size by importance) */ ''}
+          ${[
+            [240, 160, 22, 'AI 應用', '#6BFF8E'],
+            [120, 80, 14, '產品設計', '#5B8DEF'],
+            [360, 80, 16, '創業學', '#C06EFF'],
+            [120, 240, 12, '心理學', '#FBBF24'],
+            [360, 240, 15, '經濟學', '#FB7185'],
+            [480, 160, 13, '哲學', '#84CC16'],
+            [480, 60, 9, '語言學', '#F472B6'],
+            [480, 280, 10, '社會學', '#22D3EE'],
+            [540, 100, 8, '神經科學', '#A78BFA'],
+          ].map(([x, y, r, label, color]) => `
+            <circle cx="${x}" cy="${y}" r="${r}" fill="${color}33" stroke="${color}" stroke-width="1.5"/>
+            <text x="${x}" y="${y + r + 14}" text-anchor="middle" fill="${color}" font-size="10" font-weight="600">${label}</text>
+          `).join('')}
+        </svg>
+      </div>
+    </div>
+    <div class="dash" style="margin-top:20px">
+      <div class="dash__col">
+        <div class="panel"><h3 class="panel__title" style="margin-bottom:12px">本週新增的關聯</h3>
+          <div class="list">
+            <div class="row"><span class="row__icon">🔗</span><div class="row__main"><div class="row__title">AI 應用 ↔ 心理學</div><div class="row__meta">3 篇文章橋接這兩個領域</div></div></div>
+            <div class="row"><span class="row__icon">🔗</span><div class="row__main"><div class="row__title">創業學 ↔ 哲學</div><div class="row__meta">2 篇文章 · 「目的優先於方法」</div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="dash__col">
+        <div class="panel"><h3 class="panel__title" style="margin-bottom:12px">本月閱讀</h3>
+          <div class="kpis" style="grid-template-columns:repeat(2,1fr)">
+            <div class="kpi"><p class="kpi__lab">文章</p><p class="kpi__val">128</p></div>
+            <div class="kpi"><p class="kpi__lab">節點</p><p class="kpi__val">+62</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // === 把 __NN 對應到 work.id ===
+  // works 用 id 做 key，動態 lookup
+  LAYOUTS['__id'] = {
+    '06': '__06', '07': '__07', '09': '__09', '12': '__12', '13': '__13',
+    '14': '__14', '15': '__15', '16': '__16', '17': '__17', '18': '__18',
+    '19': '__19', '20': '__20',
   };
 
   // 沒對應分類的就用 default：通用 dashboard
