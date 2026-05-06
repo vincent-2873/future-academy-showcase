@@ -681,9 +681,9 @@
     });
   }
 
-  // --- Scroll reveal ---
+  // --- Scroll reveal（不含 hero 內元素，hero 已用 setupHeroReveal 整段淡入） ---
   function setupReveal() {
-    const targets = document.querySelectorAll('.hero__title, .hero__lead, .hero__stats, .about__grid, .pillar');
+    const targets = document.querySelectorAll('.about__grid, .pillar');
     targets.forEach((t) => t.classList.add('reveal'));
     if (!('IntersectionObserver' in window)) {
       targets.forEach((t) => t.classList.add('is-visible'));
@@ -694,6 +694,8 @@
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('is-visible');
+            // 動畫結束後釋放 GPU 圖層，避免巨型字次像素糊化
+            setTimeout(() => entry.target.classList.add('is-settled'), 700);
             io.unobserve(entry.target);
           }
         });
@@ -767,60 +769,12 @@
     });
   }
 
-  // --- Hero 標題逐字（逐 char）浮現 ---
+  // --- Hero 標題：整段淡入（不拆字、不 inline-block、不 transform） ---
   function setupHeroReveal() {
     const $hero = document.getElementById('hero');
-    const $title = document.getElementById('heroTitle');
-    if (!$hero || !$title) return;
-    // 把每個 line 內的字（中文一個一個 / 英文按單字）拆成 span
-    $title.querySelectorAll('.hero__line').forEach((line) => {
-      const html = line.innerHTML;
-      // 暫存 strike / accent 內 HTML
-      // 用 placeholder 處理：先抓出特殊 span，把內容拆成 word，再放回去
-      const tmp = document.createElement('div');
-      tmp.innerHTML = html;
-      const wrap = (el) => {
-        const text = el.textContent;
-        el.textContent = '';
-        Array.from(text).forEach((ch, i) => {
-          const w = document.createElement('span');
-          w.className = 'word';
-          w.style.transitionDelay = `${i * 40}ms`;
-          w.textContent = ch === ' ' ? ' ' : ch;
-          el.appendChild(w);
-        });
-      };
-      // 對 line 的 textNode 直接拆，對特殊 span 內部也拆
-      function process(node) {
-        const children = Array.from(node.childNodes);
-        children.forEach((c) => {
-          if (c.nodeType === Node.TEXT_NODE) {
-            const text = c.textContent;
-            const frag = document.createDocumentFragment();
-            Array.from(text).forEach((ch) => {
-              const w = document.createElement('span');
-              w.className = 'word';
-              w.textContent = ch === ' ' ? ' ' : ch;
-              frag.appendChild(w);
-            });
-            c.replaceWith(frag);
-          } else if (c.nodeType === Node.ELEMENT_NODE) {
-            // 對有背景漸層裁切的 span（accent / strike）整塊處理，不拆字
-            if (c.classList.contains('hero__accent') || c.classList.contains('hero__strike')) {
-              c.classList.add('word');
-            } else {
-              process(c);
-            }
-          }
-        });
-      }
-      process(line);
-    });
-    // 統一加 delay
-    const allWords = $title.querySelectorAll('.word');
-    allWords.forEach((w, i) => (w.style.transitionDelay = `${i * 28}ms`));
-    // 觸發（用 setTimeout 確保樣式套上後再切換）
-    setTimeout(() => $hero.classList.add('is-revealed'), 80);
+    if (!$hero) return;
+    setTimeout(() => $hero.classList.add('is-revealed'), 60);
+    setTimeout(() => $hero.classList.add('is-settled'), 800);
   }
 
   // --- 卡片 mouse-following border light ---
@@ -997,19 +951,11 @@
     $btn.addEventListener('click', () => setLang(state.lang === 'en' ? 'zh' : 'en'));
   }
 
-  // 把 Hero word reveal 抽出來讓切語言能重跑
+  // 切語言時 hero 標題的 i18n applyI18n 會自動更新文字，這邊只需重跑淡入
   function rebindHeroReveal() {
     const $hero = document.getElementById('hero');
     if (!$hero) return;
-    $hero.classList.remove('is-revealed');
-    // 還原 hero__title 的內容（從 i18n 字典重組，避免拆過字殘留）
-    const $title = document.getElementById('heroTitle');
-    if ($title) {
-      $title.innerHTML = `
-        <span class="hero__line"><span data-i18n="heroTitleA">${escapeHtml(t('heroTitleA'))}</span><span class="hero__strike" data-i18n="heroTitleStrike">${escapeHtml(t('heroTitleStrike'))}</span><span data-i18n="heroTitleB">${escapeHtml(t('heroTitleB'))}</span></span>
-        <span class="hero__line"><span data-i18n="heroTitleC">${escapeHtml(t('heroTitleC'))}</span><span class="hero__accent" data-i18n="heroAccent">${escapeHtml(t('heroAccent'))}</span><span data-i18n="heroTitleD">${escapeHtml(t('heroTitleD'))}</span></span>
-      `;
-    }
+    $hero.classList.remove('is-revealed', 'is-settled');
     setupHeroReveal();
   }
 
