@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=10" />
 
   <!-- Google Analytics 4 -- 把 G-XXXXXXXXXX 換成你的 Measurement ID -->
   <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
@@ -394,11 +394,19 @@
   <!-- ===== Toast ===== -->
   <div class="toast" id="toast" hidden>已複製</div>
 
-  <!-- Lenis 平滑滾動暫時停用：會讓文字看起來糊 -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script> -->
+  <!-- Lenis 平滑滾動 -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+  <script>
+    if (window.Lenis && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const lenis = new window.Lenis({ duration: 1.2, smoothWheel: true, lerp: 0.1 });
+      function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+      requestAnimationFrame(raf);
+      window.__lenis = lenis;
+    }
+  </script>
 
-  <script src="data/works.js?v=9"></script>
-  <script src="data/extras.js?v=8"></script>
-  <script src="script.js?v=9"></script>
+  <script src="data/works.js?v=10"></script>
+  <script src="data/extras.js?v=10"></script>
+  <script src="script.js?v=10"></script>
 </body>
 </html>

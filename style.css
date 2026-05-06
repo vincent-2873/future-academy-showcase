@@ -917,6 +917,9 @@ input, select { font-family: inherit; }
 /* ============================================================
    Modal
    ============================================================ */
+/* 全域 [hidden] 修正：CSS 的 display 會覆蓋 hidden attribute，必須補回 */
+[hidden] { display: none !important; }
+
 .modal {
   position: fixed;
   inset: 0;
