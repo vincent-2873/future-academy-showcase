@@ -27,3 +27,4 @@ out/
 # Local
 .cache/
 .tmp/
+.claude/
